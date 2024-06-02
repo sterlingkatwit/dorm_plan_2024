@@ -16,10 +16,12 @@ public class UIEventHandler : MonoBehaviour
     public float ofZ;
     public float ifZ;
     public GameObject wallPrefab;
+    public GameObject objPrefab;
     public Transform wallParent;
+    public Transform objParent;
 
 
-    private GameObject wallBottom, wallTop, wallLeft, wallRight;
+    private GameObject wallBottom, wallTop, wallLeft, wallRight, obj;
     
 
     public void OnButtonPress()
@@ -42,13 +44,26 @@ public class UIEventHandler : MonoBehaviour
         }
         else if (buttonName.Equals("ObjCreateBtn"))
         {
-            Debug.Log("test");
+            GenerateObj();
         }
     }
 
     void GenerateObj()
     {
+        if (ofX != null && ofY != null && ofZ != null)
+        {
+            float x = castFloat(ofX.text);
+            float y = castFloat(ofY.text);
+            ofZ = 3f;
 
+            float halfX = (x / 2) + 0.1f;
+            float halfY = (y / 2) + 0.1f;
+
+            obj = Instantiate(objPrefab, new Vector3(0, ofZ / 2, halfY), Quaternion.identity);
+            obj.transform.localScale = new Vector3(x, 0.2f, y);
+            obj.transform.parent = objParent;
+            obj.name = "Object";
+        }
     }
 
      void GenerateRoom()
