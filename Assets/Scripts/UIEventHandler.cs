@@ -44,7 +44,7 @@ public class UIEventHandler : MonoBehaviour
             float halfY = (y / 2) + 0.1f;
 
             // Create and position the four walls around (0,0). In order: Bottom/Top/Left/Right
-            wallBottom = BuildWall(new Vector3(0, ifZ / 2, -halfX), new Vector3(x, ifZ, 0.2f), "BottomWall");
+            wallBottom = BuildWall(new Vector3(0, ifZ / 2, -halfY), new Vector3(x, ifZ, 0.2f), "BottomWall");
             wallTop = BuildWall(new Vector3(0, ifZ / 2, halfY), new Vector3(x, ifZ, 0.2f), "TopWall");
             wallLeft = BuildWall(new Vector3(-halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "LeftWall");
             wallRight = BuildWall(new Vector3(halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "RightWall");
