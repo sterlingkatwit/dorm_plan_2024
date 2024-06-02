@@ -3,12 +3,17 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
+using UnityEngine.UIElements;
 
 public class UIEventHandler : MonoBehaviour
 {
     public TMP_InputField ifX;
     public TMP_InputField ifY;
+    public TMP_InputField ofX;
+    public TMP_InputField ofY;
+    public float ofZ;
     public float ifZ;
     public GameObject wallPrefab;
     public Transform wallParent;
@@ -19,16 +24,31 @@ public class UIEventHandler : MonoBehaviour
 
     public void OnButtonPress()
     {
-        if(wallBottom == null){
-            GenerateRoom();
+        string buttonName = EventSystem.current.currentSelectedGameObject.name;
+        if (buttonName.Equals("RoomCreateBtn"))
+        {
+            if (wallBottom == null)
+            {
+                GenerateRoom();
+            }
+            else
+            {
+                Destroy(wallBottom.gameObject);
+                Destroy(wallTop.gameObject);
+                Destroy(wallLeft.gameObject);
+                Destroy(wallRight.gameObject);
+                GenerateRoom();
+            }
         }
-        else{
-            Destroy(wallBottom.gameObject);
-            Destroy(wallTop.gameObject);
-            Destroy(wallLeft.gameObject);
-            Destroy(wallRight.gameObject);
-            GenerateRoom();
+        else if (buttonName.Equals("ObjCreateBtn"))
+        {
+            Debug.Log("test");
         }
+    }
+
+    void GenerateObj()
+    {
+
     }
 
      void GenerateRoom()
@@ -44,7 +64,7 @@ public class UIEventHandler : MonoBehaviour
             float halfY = (y / 2) + 0.1f;
 
             // Create and position the four walls around (0,0). In order: Bottom/Top/Left/Right
-            wallBottom = BuildWall(new Vector3(0, ifZ / 2, -halfX), new Vector3(x, ifZ, 0.2f), "BottomWall");
+            wallBottom = BuildWall(new Vector3(0, ifZ / 2, -halfY), new Vector3(x, ifZ, 0.2f), "BottomWall");
             wallTop = BuildWall(new Vector3(0, ifZ / 2, halfY), new Vector3(x, ifZ, 0.2f), "TopWall");
             wallLeft = BuildWall(new Vector3(-halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "LeftWall");
             wallRight = BuildWall(new Vector3(halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "RightWall");
