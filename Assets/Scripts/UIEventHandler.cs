@@ -2,10 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Button = UnityEngine.UI.Button;
 
 public class UIEventHandler : MonoBehaviour
 {
@@ -19,11 +21,12 @@ public class UIEventHandler : MonoBehaviour
     public GameObject objPrefab;
     public Transform wallParent;
     public Transform objParent;
+    public Button camPerspective;
+    public bool RoomCreated = false;
 
 
-    private GameObject wallBottom, wallTop, wallLeft, wallRight, obj;
+    [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, obj;
     
-
     public void OnButtonPress()
     {
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
@@ -83,6 +86,10 @@ public class UIEventHandler : MonoBehaviour
             wallTop = BuildWall(new Vector3(0, ifZ / 2, halfY), new Vector3(x, ifZ, 0.2f), "TopWall");
             wallLeft = BuildWall(new Vector3(-halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "LeftWall");
             wallRight = BuildWall(new Vector3(halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "RightWall");
+
+            //Now allow camera controls
+            camPerspective.gameObject.SetActive(true);
+            RoomCreated = true;
         }
 
     }
