@@ -25,7 +25,7 @@ public class UIEventHandler : MonoBehaviour
     public bool RoomCreated = false;
 
 
-    [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, obj;
+    [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, floor, obj;
     
     public void OnButtonPress()
     {
@@ -42,6 +42,7 @@ public class UIEventHandler : MonoBehaviour
                 Destroy(wallTop.gameObject);
                 Destroy(wallLeft.gameObject);
                 Destroy(wallRight.gameObject);
+                Destroy(floor.gameObject);
                 GenerateRoom();
             }
         }
@@ -86,6 +87,13 @@ public class UIEventHandler : MonoBehaviour
             wallTop = BuildWall(new Vector3(0, ifZ / 2, halfY), new Vector3(x, ifZ, 0.2f), "TopWall");
             wallLeft = BuildWall(new Vector3(-halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "LeftWall");
             wallRight = BuildWall(new Vector3(halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "RightWall");
+            floor = BuildWall(new Vector3(0, -0.1f, 0), new Vector3(x+0.4f, 0.2f, y+0.4f), "Floor");
+
+            Renderer floorRenderer = floor.GetComponent<Renderer>();
+            Material floorMaterial = new Material(Shader.Find("Standard"));
+            floorMaterial.color = Color.gray;
+            floorRenderer.material = floorMaterial;
+
 
             //Now allow camera controls
             camPerspective.gameObject.SetActive(true);
