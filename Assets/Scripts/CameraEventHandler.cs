@@ -71,7 +71,7 @@ public class CameraEventHandler : MonoBehaviour
         else if(buttonName.Equals("CameraMoveCounterCW")){
             camState--;
             if(camState < 0){
-                camState = 0;
+                camState = 3;
             }
             cameraOrientation();
         }

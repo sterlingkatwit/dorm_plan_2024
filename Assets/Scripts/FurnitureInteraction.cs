@@ -2,14 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using Button = UnityEngine.UI.Button;
+
 
 public class FurnitureInteraction : MonoBehaviour
 {
+    // Should be seperated into two scripts? -Lucas
 
-    private bool clickHold = false;
+    private bool isLeftClicked = false;
+    private bool isRightClicked = false;
+    private bool isRotatable = false;
     private Rigidbody rb;
     private int contacts;
     private Vector3 currentPos;
+    public Button objDel;
+    public Button objRotate;
 
     // Start is called before the first frame update
     void Start()
@@ -20,11 +27,29 @@ public class FurnitureInteraction : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(clickHold){
-            moveObject();
+        if(isLeftClicked)
+        {
+           moveObject();
         }
         else if(contacts == 0){
             transform.position = currentPos;    
+        }
+
+        if (Input.GetKeyDown(KeyCode.R) && isRightClicked)
+        {
+            isRotatable = !isRotatable;
+        }
+
+        if (Input.GetKeyDown(KeyCode.Delete) && isRightClicked)
+        {
+            Destroy(gameObject);
+        }
+
+        if (isRotatable)
+        {
+            float rotationSpeed = 50f;
+            float horizontalInput = Input.GetAxis("Horizontal");
+            transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
         }
     }
 
@@ -41,17 +66,36 @@ public class FurnitureInteraction : MonoBehaviour
         Debug.Log(contacts);
     }
 
-
-    void OnMouseDown()
+    void OnMouseOver()
     {
-        clickHold = true;        
+        if (Input.GetMouseButtonDown(0) && !isRightClicked)
+        {
+            isLeftClicked = switchSelect(isLeftClicked);
+        }
+        else if (Input.GetMouseButtonDown(1) && !isLeftClicked)
+        {
+            isRightClicked = switchSelect(isRightClicked);
+        }
     }
 
-    void OnMouseUp()
+    // Switches mouse bools and selection color of objects
+    private bool switchSelect(bool swtch)
     {
-        clickHold = false;
-    }
+        // Inverts current bool value
+        swtch = !swtch;
 
+        // Switches color of objects
+        if (swtch)
+        {
+            GetComponent<Renderer>().material.SetColor("_Color", Color.green);
+        }
+        else
+        {
+            GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+        }
+
+        return swtch;
+    }
 
     void moveObject(){
 
