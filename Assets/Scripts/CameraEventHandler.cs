@@ -4,6 +4,7 @@ using UnityEngine.EventSystems;
 using UnityEngine;
 using TMPro;
 using UnityEngine.UI;
+using System;
 
 public class CameraEventHandler : MonoBehaviour
 {
@@ -11,17 +12,22 @@ public class CameraEventHandler : MonoBehaviour
     public Camera mainCam;
     public Button camCW, camCCW;
     private int camState = 0;
+    private float camDist = 10f;
+    private bool roomSizeFlag = true;
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if(uiEH.RoomCreated && roomSizeFlag){
+            orthoAdjust();
+            roomSizeFlag = false;
+        }
     }
 
     public void OnButtonPress(){
@@ -38,8 +44,9 @@ public class CameraEventHandler : MonoBehaviour
 
                 //Reset 2D camera position.
                 mainCam.orthographic = true;
-                mainCam.transform.position = new Vector3(0, 10, 0);
+                mainCam.transform.position = new Vector3(0, camDist, 0);
                 mainCam.transform.rotation = Quaternion.Euler(90, 0, 0);
+                orthoAdjust();
                 mainCam.rect = new Rect(0,0,0.85f,1);
 
                 //All walls active.
@@ -57,7 +64,7 @@ public class CameraEventHandler : MonoBehaviour
                 mainCam.orthographic = false;
                 mainCam.rect = new Rect(0,0,0.85f,1);
                 cameraOrientation();
-                
+
                 buttonText.SetText("2D");
             }
         }
@@ -77,30 +84,44 @@ public class CameraEventHandler : MonoBehaviour
         }
     }
 
+    private void orthoAdjust(){
+        float wallsX = uiEH.wallBottom.gameObject.transform.localScale.x;
+        float wallsZ = uiEH.wallLeft.gameObject.transform.localScale.z;
+
+        camDist = Math.Max(wallsX,wallsZ) + 2f;
+        mainCam.orthographicSize = camDist-3f;
+    }
+
 
     private void cameraOrientation(){
         if(uiEH.RoomCreated){
+
+            float wallsX = uiEH.wallBottom.gameObject.transform.localScale.x;
+            float wallsZ = uiEH.wallLeft.gameObject.transform.localScale.z;
+
+            camDist = Math.Max(wallsX,wallsZ) + 2f;
+
             if(camState.Equals(0)){
-                mainCam.transform.position = new Vector3(0, 3, -10);
+                mainCam.transform.position = new Vector3(0, 3, -camDist);
                 mainCam.transform.rotation = Quaternion.Euler(10, 0, 0);
                 uiEH.wallBottom.SetActive(false);
                 roomState(camState);
             }
             else if(camState.Equals(1)){
-                mainCam.transform.position = new Vector3(-10, 3, 0);
+                mainCam.transform.position = new Vector3(-camDist, 3, 0);
                 mainCam.transform.rotation = Quaternion.Euler(10, 90, 0);
 
                 uiEH.wallLeft.SetActive(false);
                 roomState(camState);
             }
             else if(camState.Equals(2)){
-                mainCam.transform.position = new Vector3(0, 3, 10);
+                mainCam.transform.position = new Vector3(0, 3, camDist);
                 mainCam.transform.rotation = Quaternion.Euler(10, 180, 0);
                 uiEH.wallTop.SetActive(false);
                 roomState(camState);
             }
             else if(camState.Equals(3)){
-                mainCam.transform.position = new Vector3(10, 3, 0);
+                mainCam.transform.position = new Vector3(camDist, 3, 0);
                 mainCam.transform.rotation = Quaternion.Euler(10, 270, 0);
                 uiEH.wallRight.SetActive(false);
                 roomState(camState);
