@@ -35,17 +35,12 @@ public class FurnitureInteraction : MonoBehaviour
             transform.position = currentPos;    
         }
 
-        if (Input.GetKeyDown(KeyCode.R) && isRightClicked)
-        {
-            isRotatable = !isRotatable;
-        }
-
         if (Input.GetKeyDown(KeyCode.Delete) && isRightClicked)
         {
             Destroy(gameObject);
         }
 
-        if (isRotatable)
+        if (isRightClicked)
         {
             float rotationSpeed = 50f;
             float horizontalInput = Input.GetAxis("Horizontal");
@@ -108,6 +103,4 @@ public class FurnitureInteraction : MonoBehaviour
         // Update the position of the object to the mouse position on only X and Z axes.
         currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
     }
-
-
 }
