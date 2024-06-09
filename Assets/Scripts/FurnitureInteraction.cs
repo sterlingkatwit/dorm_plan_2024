@@ -9,6 +9,10 @@ public class FurnitureInteraction : MonoBehaviour
 {
     // Should be seperated into two scripts? -Lucas
 
+    private GameObject genIntEV, uiEH, tempObj;
+    private GeneralInteractionEventHandler genIntScript;
+    private UIEventHandler uiEHScript;
+
     private bool isLeftClicked = false;
     private bool isRightClicked = false;
     private bool isRotatable = false;
@@ -21,6 +25,12 @@ public class FurnitureInteraction : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        // Try to avoid this but do what you gotta do :)
+        genIntEV = GameObject.Find("GeneralInteractionEH");
+        genIntScript = genIntEV.GetComponent<GeneralInteractionEventHandler>();
+        uiEH = GameObject.Find("UIEventHandler");
+        uiEHScript = uiEH.GetComponent<UIEventHandler>();
+
         rb = gameObject.GetComponent<Rigidbody>();
     }
 
@@ -29,7 +39,11 @@ public class FurnitureInteraction : MonoBehaviour
     {
         if(isLeftClicked)
         {
-           moveObject();
+            
+            moveObject();
+
+            objectSelected();
+           
         }
         else if(contacts == 0){
             transform.position = currentPos;    
@@ -102,5 +116,38 @@ public class FurnitureInteraction : MonoBehaviour
 
         // Update the position of the object to the mouse position on only X and Z axes.
         currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
+    }
+
+    void copyObj(){
+        
+        if(genIntScript.clipboard.childCount > 0){
+            Destroy(genIntScript.clipboard.GetChild(0).gameObject);
+        }
+
+        Transform state = this.gameObject.GetComponent<Transform>();
+        tempObj = Instantiate(this.gameObject, new Vector3(state.position.x, state.position.y, state.position.z), Quaternion.identity);
+        tempObj.transform.parent = genIntScript.clipboard;
+        tempObj.name = this.gameObject.name + "(Copy)";
+        tempObj.SetActive(false);
+    }
+
+    void objectSelected(){
+
+
+        if(Input.GetKey(KeyCode.LeftControl)){
+
+            if(Input.GetKeyDown(KeyCode.C)){
+                copyObj();
+            }
+            else if(Input.GetKeyDown(KeyCode.X)){
+                copyObj();
+                Destroy(this.gameObject);
+            }
+        }
+
+        uiEHScript.ofName.text = this.gameObject.name;
+        uiEHScript.ofX.text = this.gameObject.GetComponent<Renderer>().bounds.size.x.ToString();
+        uiEHScript.ofY.text = this.gameObject.GetComponent<Renderer>().bounds.size.z.ToString();
+
     }
 }

@@ -10,10 +10,14 @@ public class CameraEventHandler : MonoBehaviour
 {
     [SerializeField] private UIEventHandler uiEH;
     public Camera mainCam;
-    public Button camCW, camCCW;
+    public Button camCW, camCCW, camFree, camOrtho;
     private int camState = 0;
     private float camDist = 10f;
     private bool roomSizeFlag = true;
+
+    private bool freeEnabled = false;
+    private float dragSpeed = 12;
+    private Vector3 dragOrigin;
 
 
     // Start is called before the first frame update
@@ -25,8 +29,31 @@ public class CameraEventHandler : MonoBehaviour
     void Update()
     {
         if(uiEH.RoomCreated && roomSizeFlag){
+            camFree.gameObject.SetActive(true);
+            camOrtho.gameObject.SetActive(true);
             orthoAdjust();
             roomSizeFlag = false;
+        }
+
+        //If free-cam is enabled, can mouse down to move camera while in 2D mode.
+        if(freeEnabled && mainCam.orthographic){
+
+            //Gets mouse position at click.
+            if (Input.GetMouseButtonDown(0))
+            {
+                dragOrigin = Input.mousePosition;
+            }
+
+            //Moves while mouse is still held down.
+            if (Input.GetMouseButton(0))
+            {
+                Vector3 difference = mainCam.ScreenToViewportPoint(dragOrigin - Input.mousePosition);
+                Vector3 move = new Vector3(difference.x * dragSpeed, 0, difference.y * dragSpeed);
+
+                Vector3 newPosition = mainCam.transform.position + move;
+                mainCam.transform.position = newPosition;
+                dragOrigin = Input.mousePosition;
+            }
         }
     }
 
@@ -41,6 +68,7 @@ public class CameraEventHandler : MonoBehaviour
                 //Make 3D controls inaccessible.
                 camCW.gameObject.SetActive(false);
                 camCCW.gameObject.SetActive(false);
+                camFree.gameObject.SetActive(true);
 
                 //Reset 2D camera position.
                 mainCam.orthographic = true;
@@ -59,6 +87,8 @@ public class CameraEventHandler : MonoBehaviour
                 //Make 3D controls accessible.
                 camCW.gameObject.SetActive(true);
                 camCCW.gameObject.SetActive(true);
+                camFree.gameObject.SetActive(false);
+
 
                 //Set 3D camera position. Last 3D position should be saved by camState.
                 mainCam.orthographic = false;
@@ -81,6 +111,18 @@ public class CameraEventHandler : MonoBehaviour
                 camState = 3;
             }
             cameraOrientation();
+        }
+        else if(buttonName.Equals("CameraFreeCam")){
+            if(buttonText.text.Equals("Free")){
+
+                freeEnabled = true;
+                buttonText.SetText("Lock");
+            }
+            else if(buttonText.text.Equals("Lock")){
+
+                freeEnabled = false;
+                buttonText.SetText("Free");     
+            }
         }
     }
 

@@ -13,6 +13,7 @@ public class UIEventHandler : MonoBehaviour
 {
     public TMP_InputField ifX;
     public TMP_InputField ifY;
+    public TMP_InputField ofName;
     public TMP_InputField ofX;
     public TMP_InputField ofY;
     public float ofZ;
@@ -21,7 +22,6 @@ public class UIEventHandler : MonoBehaviour
     public GameObject objPrefab;
     public Transform wallParent;
     public Transform objParent;
-    public Button camPerspective;
     public bool RoomCreated = false;
 
 
@@ -66,7 +66,7 @@ public class UIEventHandler : MonoBehaviour
             obj = Instantiate(objPrefab, new Vector3(0, ofZ / 2, halfY), Quaternion.identity);
             obj.transform.localScale = new Vector3(x, 0.2f, y);
             obj.transform.parent = objParent;
-            obj.name = "Object";
+            obj.name = ofName.text;
         }
     }
 
@@ -96,7 +96,6 @@ public class UIEventHandler : MonoBehaviour
 
 
             //Now allow camera controls
-            camPerspective.gameObject.SetActive(true);
             RoomCreated = true;
         }
 
