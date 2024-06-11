@@ -9,10 +9,12 @@ using System;
 public class CameraEventHandler : MonoBehaviour
 {
     [SerializeField] private UIEventHandler uiEH;
+    [HideInInspector] public bool camSwitched = false;
     public Camera mainCam;
     public Button camCW, camCCW, camFree, camOrtho;
     private int camState = 0;
     private float camDist = 10f;
+
     private bool roomSizeFlag = true;
 
     private bool freeEnabled = false;
@@ -38,13 +40,11 @@ public class CameraEventHandler : MonoBehaviour
         //If free-cam is enabled, can mouse down to move camera while in 2D mode.
         if(freeEnabled && mainCam.orthographic){
 
-            //Gets mouse position at click.
             if (Input.GetMouseButtonDown(0))
             {
                 dragOrigin = Input.mousePosition;
             }
 
-            //Moves while mouse is still held down.
             if (Input.GetMouseButton(0))
             {
                 Vector3 difference = mainCam.ScreenToViewportPoint(dragOrigin - Input.mousePosition);
@@ -64,6 +64,7 @@ public class CameraEventHandler : MonoBehaviour
         //Switches camera between orthographic and perspective
         if(buttonName.Equals("CameraOrthoToggle")){
             if(buttonText.text.Equals("2D")){
+                camSwitched = true;
 
                 //Make 3D controls inaccessible.
                 camCW.gameObject.SetActive(false);

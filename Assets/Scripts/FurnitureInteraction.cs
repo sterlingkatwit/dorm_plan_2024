@@ -9,9 +9,10 @@ public class FurnitureInteraction : MonoBehaviour
 {
     // Should be seperated into two scripts? -Lucas
 
-    private GameObject genIntEV, uiEH, tempObj;
+    private GameObject genIntEV, uiEH, camEH, tempObj;
     private GeneralInteractionEventHandler genIntScript;
     private UIEventHandler uiEHScript;
+    private CameraEventHandler camEHScript;
 
     private bool isLeftClicked = false;
     private bool isRightClicked = false;
@@ -30,6 +31,8 @@ public class FurnitureInteraction : MonoBehaviour
         genIntScript = genIntEV.GetComponent<GeneralInteractionEventHandler>();
         uiEH = GameObject.Find("UIEventHandler");
         uiEHScript = uiEH.GetComponent<UIEventHandler>();
+        camEH = GameObject.Find("CameraEventHandler");
+        camEHScript = camEH.GetComponent<CameraEventHandler>();
 
         rb = gameObject.GetComponent<Rigidbody>();
     }
@@ -39,12 +42,9 @@ public class FurnitureInteraction : MonoBehaviour
     {
         if(isLeftClicked)
         {
-            
-            moveObject();
-
             objectSelected();
-           
         }
+
         else if(contacts == 0){
             transform.position = currentPos;    
         }
@@ -60,20 +60,10 @@ public class FurnitureInteraction : MonoBehaviour
             float horizontalInput = Input.GetAxis("Horizontal");
             transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
         }
+
     }
 
-    void OnCollisionEnter(Collision col){ 
-        if(col.gameObject.CompareTag("Wall")){
-            contacts++;
-        }
-        Debug.Log(contacts);
-    }
-    void OnCollisionExit(Collision col){ 
-        if(col.gameObject.CompareTag("Wall")){
-            contacts--;;
-        }
-        Debug.Log(contacts);
-    }
+ 
 
     void OnMouseOver()
     {
@@ -85,7 +75,7 @@ public class FurnitureInteraction : MonoBehaviour
         {
             isRightClicked = switchSelect(isRightClicked);
         }
-    }
+}
 
     // Switches mouse bools and selection color of objects
     private bool switchSelect(bool swtch)
@@ -118,6 +108,45 @@ public class FurnitureInteraction : MonoBehaviour
         currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
     }
 
+    void interact3D(float increment){
+        int dir = 0;
+        float curX = transform.position.x;
+        float curY = transform.position.y;
+        float curZ = transform.position.z;
+
+        //arrows keys?
+        switch(dir){
+            case 0:
+                if(Input.GetKeyDown(KeyCode.UpArrow)){
+                    currentPos = transform.position = new Vector3(curX+increment, curY, curZ);
+                }
+                else if(Input.GetKeyDown(KeyCode.DownArrow)){
+                    currentPos = transform.position = new Vector3(curX-increment, curY, curZ);
+                }
+            break;
+            case 1:
+                if(Input.GetKeyDown(KeyCode.UpArrow)){
+                    currentPos = transform.position = new Vector3(curX, curY+increment, curZ);
+                }
+                else if(Input.GetKeyDown(KeyCode.DownArrow)){
+                    currentPos = transform.position = new Vector3(curX, curY-increment, curZ);
+                }
+            break;
+            case 2:
+                if(Input.GetKeyDown(KeyCode.UpArrow)){
+                    currentPos = transform.position = new Vector3(curX, curY, curZ+increment);
+                }
+                else if(Input.GetKeyDown(KeyCode.DownArrow)){
+                    currentPos = transform.position = new Vector3(curX, curY, curZ-increment);
+                }
+            break;
+        }
+
+    }
+
+
+
+
     void copyObj(){
         
         if(genIntScript.clipboard.childCount > 0){
@@ -132,6 +161,20 @@ public class FurnitureInteraction : MonoBehaviour
     }
 
     void objectSelected(){
+
+        // This locks the object in place when switching from 3D to 2D so obj doesn't teleport.
+        if(camEHScript.camSwitched){
+            isLeftClicked = false;
+            camEHScript.camSwitched = false;
+        }
+        else if(camEHScript.mainCam.orthographic){
+            moveObject();
+        }
+        else if(!camEHScript.mainCam.orthographic){
+            interact3D(1);
+        }
+
+
 
 
         if(Input.GetKey(KeyCode.LeftControl)){
@@ -150,4 +193,22 @@ public class FurnitureInteraction : MonoBehaviour
         uiEHScript.ofY.text = this.gameObject.GetComponent<Renderer>().bounds.size.z.ToString();
 
     }
+
+
+
+
+
+
+    // void OnCollisionEnter(Collision col){ 
+    //     if(col.gameObject.CompareTag("Wall")){
+    //         contacts++;
+    //     }
+    //     Debug.Log(contacts);
+    // }
+    // void OnCollisionExit(Collision col){ 
+    //     if(col.gameObject.CompareTag("Wall")){
+    //         contacts--;;
+    //     }
+    //     Debug.Log(contacts);
+    // }
 }
