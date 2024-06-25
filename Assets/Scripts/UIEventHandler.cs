@@ -24,7 +24,6 @@ public class UIEventHandler : MonoBehaviour
     public Transform objParent;
     public bool RoomCreated = false;
 
-
     [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, floor, obj;
     
     public void OnButtonPress()
@@ -94,11 +93,9 @@ public class UIEventHandler : MonoBehaviour
             floorMaterial.color = Color.gray;
             floorRenderer.material = floorMaterial;
 
-
             //Now allow camera controls
             RoomCreated = true;
         }
-
     }
 
     public float castFloat(String inp){
@@ -116,4 +113,3 @@ public class UIEventHandler : MonoBehaviour
         return wall;
     } 
 }
-

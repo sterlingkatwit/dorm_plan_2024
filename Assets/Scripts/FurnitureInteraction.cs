@@ -63,8 +63,6 @@ public class FurnitureInteraction : MonoBehaviour
 
     }
 
- 
-
     void OnMouseOver()
     {
         if (Input.GetMouseButtonDown(0) && !isRightClicked)
