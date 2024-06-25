@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using Button = UnityEngine.UI.Button;
 
 
@@ -9,17 +10,20 @@ public class FurnitureInteraction : MonoBehaviour
 {
     // Should be seperated into two scripts? -Lucas
 
-    private GameObject genIntEV, uiEH, camEH, tempObj;
+    private GameObject genIntEV, uiEH, camEH, objEditEH, tempObj;
     private GeneralInteractionEventHandler genIntScript;
     private UIEventHandler uiEHScript;
     private CameraEventHandler camEHScript;
+    private ObjEditUIEventHandler objEditScript;
+    public Color prevColor;
+
 
     private bool isLeftClicked = false;
     private bool isRightClicked = false;
     private bool isRotatable = false;
     private Rigidbody rb;
     private int contacts;
-    private Vector3 currentPos;
+    [HideInInspector] public Vector3 currentPos;
     public Button objDel;
     public Button objRotate;
 
@@ -33,17 +37,35 @@ public class FurnitureInteraction : MonoBehaviour
         uiEHScript = uiEH.GetComponent<UIEventHandler>();
         camEH = GameObject.Find("CameraEventHandler");
         camEHScript = camEH.GetComponent<CameraEventHandler>();
+        objEditEH = GameObject.Find("ObjEditUIEventHandler");
+        objEditScript = objEditEH.GetComponent<ObjEditUIEventHandler>();
 
         rb = gameObject.GetComponent<Rigidbody>();
+        prevColor = Color.white;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(isLeftClicked)
-        {
+        if(isLeftClicked){
+            //Move objects when left clicked. Check if cam switched recently.
+            if(camEHScript.camSwitched){
+                isLeftClicked = false;
+                camEHScript.camSwitched = false;
+            }
+            else{
+                moveObject();
+            }
+
+        } else if (isRightClicked){
             objectSelected();
+            //Edited out for now.
+            // float rotationSpeed = 50f;
+            // float horizontalInput = Input.GetAxis("Horizontal");
+            // transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
         }
+
+
 
         else if(contacts == 0){
             transform.position = currentPos;    
@@ -54,28 +76,24 @@ public class FurnitureInteraction : MonoBehaviour
             Destroy(gameObject);
         }
 
-        if (isRightClicked)
-        {
-            float rotationSpeed = 50f;
-            float horizontalInput = Input.GetAxis("Horizontal");
-            transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
-        }
+
 
     }
 
  
 
-    void OnMouseOver()
-    {
+    void OnMouseOver(){
         if (Input.GetMouseButtonDown(0) && !isRightClicked)
         {
             isLeftClicked = switchSelect(isLeftClicked);
+            objEditScript.objectSelected = this.gameObject;
         }
         else if (Input.GetMouseButtonDown(1) && !isLeftClicked)
         {
             isRightClicked = switchSelect(isRightClicked);
+            objEditScript.objectSelected = this.gameObject;
         }
-}
+    }
 
     // Switches mouse bools and selection color of objects
     private bool switchSelect(bool swtch)
@@ -90,60 +108,36 @@ public class FurnitureInteraction : MonoBehaviour
         }
         else
         {
-            GetComponent<Renderer>().material.SetColor("_Color", Color.white);
+            GetComponent<Renderer>().material.SetColor("_Color", prevColor);
         }
 
         return swtch;
     }
 
     void moveObject(){
+        isRightClicked = false;
+        // Object can be moved with mouse while holding shift.
+        if(Input.GetKey(KeyCode.LeftShift) && Camera.main.orthographic){
+            // Get the current mouse position in screen coordinates
+            Vector3 mPosScreen = Input.mousePosition;
 
-        // Get the current mouse position in screen coordinates
-        Vector3 mPosScreen = Input.mousePosition;
+            // Convert the screen mouse position to world point
+            Vector3 mPosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mPosScreen.x, mPosScreen.y, transform.position.y - Camera.main.transform.position.y));
 
-        // Convert the screen mouse position to world point
-        Vector3 mPosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mPosScreen.x, mPosScreen.y, transform.position.y - Camera.main.transform.position.y));
-
-        // Update the position of the object to the mouse position on only X and Z axes.
-        currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
-    }
-
-    void interact3D(float increment){
-        int dir = 0;
-        float curX = transform.position.x;
-        float curY = transform.position.y;
-        float curZ = transform.position.z;
-
-        //arrows keys?
-        switch(dir){
-            case 0:
-                if(Input.GetKeyDown(KeyCode.UpArrow)){
-                    currentPos = transform.position = new Vector3(curX+increment, curY, curZ);
-                }
-                else if(Input.GetKeyDown(KeyCode.DownArrow)){
-                    currentPos = transform.position = new Vector3(curX-increment, curY, curZ);
-                }
-            break;
-            case 1:
-                if(Input.GetKeyDown(KeyCode.UpArrow)){
-                    currentPos = transform.position = new Vector3(curX, curY+increment, curZ);
-                }
-                else if(Input.GetKeyDown(KeyCode.DownArrow)){
-                    currentPos = transform.position = new Vector3(curX, curY-increment, curZ);
-                }
-            break;
-            case 2:
-                if(Input.GetKeyDown(KeyCode.UpArrow)){
-                    currentPos = transform.position = new Vector3(curX, curY, curZ+increment);
-                }
-                else if(Input.GetKeyDown(KeyCode.DownArrow)){
-                    currentPos = transform.position = new Vector3(curX, curY, curZ-increment);
-                }
-            break;
+            // Update the position of the object to the mouse position on only X and Z axes.
+            currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
         }
 
-    }
 
+        if(!camEHScript.mainCam.orthographic){
+            currentPos = objEditScript.interact3D(objEditScript.Increment, objEditScript.interact3Dvalue, this.gameObject);
+        }
+        else{
+            currentPos = objEditScript.interact2D(objEditScript.Increment, this.gameObject, false);
+        }
+
+        checkSelection();
+    }
 
 
 
@@ -161,21 +155,7 @@ public class FurnitureInteraction : MonoBehaviour
     }
 
     void objectSelected(){
-
-        // This locks the object in place when switching from 3D to 2D so obj doesn't teleport.
-        if(camEHScript.camSwitched){
-            isLeftClicked = false;
-            camEHScript.camSwitched = false;
-        }
-        else if(camEHScript.mainCam.orthographic){
-            moveObject();
-        }
-        else if(!camEHScript.mainCam.orthographic){
-            interact3D(1);
-        }
-
-
-
+        isLeftClicked = false;
 
         if(Input.GetKey(KeyCode.LeftControl)){
 
@@ -188,27 +168,37 @@ public class FurnitureInteraction : MonoBehaviour
             }
         }
 
-        uiEHScript.ofName.text = this.gameObject.name;
-        uiEHScript.ofX.text = this.gameObject.GetComponent<Renderer>().bounds.size.x.ToString();
-        uiEHScript.ofY.text = this.gameObject.GetComponent<Renderer>().bounds.size.z.ToString();
+        checkSelection();
+    }
+
+
+    void checkSelection(){
+
+        // First line gets rid of green/click when clicking off the obj.
+        // Second line gets rid of green/click on a previous object when left clicking a new object
+        // Third gets rid of green/click when right clicking away from obj.
+        // Fourth line gets rid of green/click on a previous object when right clicking a new object
+        if((Input.GetMouseButtonDown(0) && !genIntScript.IsPointerOverGameObject("Object")) ||
+        (!objEditScript.objectSelected.Equals(this.gameObject) && objEditScript.objectSelected.GetComponent<FurnitureInteraction>().isLeftClicked) ||
+        (Input.GetMouseButtonDown(1) && !genIntScript.IsPointerOverGameObject("Object")) ||
+        (!objEditScript.objectSelected.Equals(this.gameObject) && objEditScript.objectSelected.GetComponent<FurnitureInteraction>().isRightClicked)){
+            isRightClicked = false;
+            isLeftClicked = false;
+            GetComponent<Renderer>().material.SetColor("_Color", prevColor);
+        }
 
     }
 
 
-
-
-
-
-    // void OnCollisionEnter(Collision col){ 
-    //     if(col.gameObject.CompareTag("Wall")){
-    //         contacts++;
-    //     }
-    //     Debug.Log(contacts);
-    // }
-    // void OnCollisionExit(Collision col){ 
-    //     if(col.gameObject.CompareTag("Wall")){
-    //         contacts--;;
-    //     }
-    //     Debug.Log(contacts);
-    // }
+    // Object collisions
+    void OnCollisionEnter(Collision col){ 
+        if(col.gameObject.CompareTag("Object")){
+            // change material or smth
+        }
+    }
+    void OnCollisionExit(Collision col){ 
+        if(col.gameObject.CompareTag("Object")){
+            // change material or smth
+        }
+    }
 }

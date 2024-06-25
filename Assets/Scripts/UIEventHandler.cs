@@ -8,6 +8,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Button = UnityEngine.UI.Button;
+using Image = UnityEngine.UI.Image;
 
 public class UIEventHandler : MonoBehaviour
 {
@@ -16,7 +17,10 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofName;
     public TMP_InputField ofX;
     public TMP_InputField ofY;
-    public float ofZ;
+    public TMP_InputField ofZ;
+    public Image objCreateImg;
+    public Canvas canvMain;
+
     public float ifZ;
     public GameObject wallPrefab;
     public GameObject objPrefab;
@@ -24,9 +28,13 @@ public class UIEventHandler : MonoBehaviour
     public Transform objParent;
     public bool RoomCreated = false;
 
+    [HideInInspector] public GameObject selectedWall;
+    [HideInInspector] public Vector3 pointOnWall;
+
 
     [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, floor, obj;
-    
+
+
     public void OnButtonPress()
     {
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
@@ -54,25 +62,27 @@ public class UIEventHandler : MonoBehaviour
 
     void GenerateObj()
     {
-        if (ofX != null && ofY != null && ofZ != null)
+        if (ofX.text != null && ofY.text != null && ofZ.text != null)
         {
             float x = castFloat(ofX.text);
             float y = castFloat(ofY.text);
-            ofZ = 3f;
+            float z = castFloat(ofZ.text);
 
-            float halfX = (x / 2) + 0.1f;
-            float halfY = (y / 2) + 0.1f;
-
-            obj = Instantiate(objPrefab, new Vector3(0, ofZ / 2, halfY), Quaternion.identity);
-            obj.transform.localScale = new Vector3(x, 0.2f, y);
-            obj.transform.parent = objParent;
+            obj = Instantiate(objPrefab, new Vector3(0, y/2, 0), Quaternion.identity);
+            obj.transform.SetParent(objParent);
+            obj.transform.localScale = new Vector3(x, y, z);
             obj.name = ofName.text;
+            obj.GetComponent<FurnitureInteraction>().currentPos = new Vector3(0, y/2, 0);
+
+            // Reset the window on creation
+            ofX.text = ofY.text = ofZ.text = ofName.text = "";
+            objCreateImg.gameObject.SetActive(false);
         }
     }
 
      void GenerateRoom()
     {
-        if(ifX != null && ifY != null){
+        if(ifX.text != null && ifY.text != null){
             float x = castFloat(ifX.text);
             float y = castFloat(ifY.text);
             ifZ = 3f;
@@ -93,6 +103,9 @@ public class UIEventHandler : MonoBehaviour
             Material floorMaterial = new Material(Shader.Find("Standard"));
             floorMaterial.color = Color.gray;
             floorRenderer.material = floorMaterial;
+            floor.tag = "Floor";
+            wallBottom.tag = wallTop.tag = "WallZ";
+            wallLeft.tag = wallRight.tag = "WallX";
 
 
             //Now allow camera controls
@@ -106,6 +119,7 @@ public class UIEventHandler : MonoBehaviour
         float.TryParse(inp, out x);
         return x;
     }
+
 
     GameObject BuildWall(Vector3 position, Vector3 scale, String name)
     {
