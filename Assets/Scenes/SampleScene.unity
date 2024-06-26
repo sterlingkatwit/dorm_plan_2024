@@ -13460,11 +13460,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 604f932a081ca3f4b924311111fafcd1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  uiEH: {fileID: 0}
-  wallPrefab: {fileID: 0}
-  wallParent: {fileID: 0}
-  objPrefab: {fileID: 0}
-  objParent: {fileID: 0}
+  uiEH: {fileID: 1494306714}
+  wallPrefab: {fileID: 7773109410033309884, guid: 29fe27d8fca97e048a87ce99134535c5, type: 3}
+  wallParent: {fileID: 1462920086}
+  objPrefab: {fileID: 7773109410033309884, guid: 03a414ed6a3e1444aa43508bbf8a6f9b, type: 3}
+  objParent: {fileID: 1341746082}
 --- !u!1 &1458823274
 GameObject:
   m_ObjectHideFlags: 0

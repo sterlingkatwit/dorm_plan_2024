@@ -37,7 +37,7 @@ public class DataHandler : MonoBehaviour
         saveFile.setRoomSize(5);
         saveFile.setObjSize(ObjTop.transform.childCount - 1);
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
-        if (buttonName.Equals("SaveBtn"))
+        if (buttonName.Equals("TestSaveBtn"))
         {
             for (int i = 0; i < RoomTop.transform.childCount; i++)
             {
@@ -67,7 +67,7 @@ public class DataHandler : MonoBehaviour
             string save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
 
-        } else if (buttonName.Equals("LoadBtn"))
+        } else if (buttonName.Equals("TestLoadBtn"))
         {
             string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
             allSaves = JsonConvert.DeserializeObject<Dictionary<int, GameData>>(save);
@@ -85,7 +85,7 @@ public class DataHandler : MonoBehaviour
                 wall.transform.parent = wallParent;
                 wall.name = load.room[i].name;
 
-                if (load.room[i].name.Equals("Floor")) {
+               /* if (load.room[i].name.Equals("Floor")) {
 
                 } 
                 else if (load.room[i].name.Equals("Floor"))
@@ -99,7 +99,7 @@ public class DataHandler : MonoBehaviour
                 else if (load.room[i].name.Equals("Floor"))
                 {
 
-                }
+                }*/
 
                 if (load.room[i].name.Equals("Floor"))
                 {
