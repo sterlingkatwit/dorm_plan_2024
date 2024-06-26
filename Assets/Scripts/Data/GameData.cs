@@ -23,12 +23,6 @@ public class GameData
     public ObjStruct[] room;
     public ObjStruct[] objects;
 
-    /*public int SaveNum
-    {
-        set { saveNum = value; }
-        get { return saveNum; } 
-    }*/
-
     public int getRoomSize()
     {
         return room.Length; 
