@@ -107,11 +107,9 @@ public class UIEventHandler : MonoBehaviour
             wallBottom.tag = wallTop.tag = "WallZ";
             wallLeft.tag = wallRight.tag = "WallX";
 
-
             //Now allow camera controls
             RoomCreated = true;
         }
-
     }
 
     public float castFloat(String inp){
@@ -130,4 +128,3 @@ public class UIEventHandler : MonoBehaviour
         return wall;
     } 
 }
-

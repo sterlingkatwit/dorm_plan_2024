@@ -8,7 +8,7 @@ using System;
 
 public class CameraEventHandler : MonoBehaviour
 {
-    [SerializeField] private UIEventHandler uiEH;
+    [SerializeField] public UIEventHandler uiEH;
     [HideInInspector] public bool camSwitched = false;
     public Camera mainCam;
     public Button camCW, camCCW, camFree, camOrtho;
