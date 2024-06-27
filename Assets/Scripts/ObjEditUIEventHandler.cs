@@ -18,7 +18,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
     public Image objEditWindow2D, objEditWindow3D, roomEdit;
     public Canvas canvMain;
     [HideInInspector] public GameObject objectSelected;
-    public GameObject objCurrentEdit;
+    [HideInInspector] public GameObject objCurrentEdit;
     public GeneralInteractionEventHandler genIntEH;
     public UIEventHandler uiEH;
     [HideInInspector] public int interact3Dvalue, incTextValue, IncrementRotate, incrementArray;

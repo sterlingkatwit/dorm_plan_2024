@@ -7073,6 +7073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   obj: {fileID: 0}
   objEditEH: {fileID: 175921855}
+  roomEditEH: {fileID: 1387172169}
   uiEH: {fileID: 1494306714}
   camEH: {fileID: 1004388696}
   objParent: {fileID: 1341746082}
@@ -12155,8 +12156,8 @@ MonoBehaviour:
   objCreateWin: {fileID: 13701257}
   windowX: {fileID: 462412094}
   windowY: {fileID: 108693638}
-  winEditX: {fileID: 0}
-  winEditY: {fileID: 0}
+  winEditX: {fileID: 1578408699}
+  winEditY: {fileID: 1938314290}
   editWallButton: {fileID: 108446985}
   windowOrDoor: {fileID: 1987182434}
   uiEH: {fileID: 1494306714}
@@ -14091,7 +14092,7 @@ GameObject:
   - component: {fileID: 1578408700}
   - component: {fileID: 1578408699}
   m_Layer: 5
-  m_Name: WindowXInput
+  m_Name: EditWindowXInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -18632,7 +18633,7 @@ GameObject:
   - component: {fileID: 1938314291}
   - component: {fileID: 1938314290}
   m_Layer: 5
-  m_Name: WindowYInput
+  m_Name: EditWindowYInput
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

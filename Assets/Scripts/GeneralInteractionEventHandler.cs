@@ -11,11 +11,10 @@ public class GeneralInteractionEventHandler : MonoBehaviour
 
     [HideInInspector] public GameObject obj;
     public ObjEditUIEventHandler objEditEH;
+    public RoomEditUIEventHandler roomEditEH;
     public UIEventHandler uiEH;
     public CameraEventHandler camEH;
     public Transform objParent, clipboard;
-    public Image roomEdit;
-
     
 
     // Start is called before the first frame update
@@ -43,10 +42,11 @@ public class GeneralInteractionEventHandler : MonoBehaviour
              !IsPointerOverGameObject("WallZ") && !IsPointerOverGameObject("WallX") && !IsPointerOverGameObject("Window") && !IsPointerOverGameObject("Door")){
                 if (uiEH.objCreateImg.gameObject != null){
 
-                    if(objEditEH.objEditWindow2D.IsActive() || objEditEH.objEditWindow3D.IsActive() || roomEdit.IsActive()){
+                    if(objEditEH.objEditWindow2D.IsActive() || objEditEH.objEditWindow3D.IsActive() || roomEditEH.wallObjEditWin.IsActive() || roomEditEH.wallEditWin.IsActive()){
                         objEditEH.objEditWindow2D.gameObject.SetActive(false);
                         objEditEH.objEditWindow3D.gameObject.SetActive(false);
-                        roomEdit.gameObject.SetActive(false);
+                        roomEditEH.wallObjEditWin.gameObject.SetActive(false);
+                        roomEditEH.wallEditWin.gameObject.SetActive(false);
                     }
 
                     uiEH.objCreateImg.gameObject.SetActive(true);

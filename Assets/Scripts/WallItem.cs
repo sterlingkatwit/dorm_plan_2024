@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class SelectableObject : MonoBehaviour
 {
-    public GameObject objEdit, genInteract;
+    public GameObject objEdit, genInteract, roomEdit;
     public ObjEditUIEventHandler objEditScript;
     public GeneralInteractionEventHandler genIntScript;
+    public RoomEditUIEventHandler roomEditScript;
     private Color originalColor;
     private bool isSelected = false;
     private Renderer objectRenderer;
@@ -18,11 +19,11 @@ public class SelectableObject : MonoBehaviour
         objEditScript = objEdit.GetComponent<ObjEditUIEventHandler>();
         genInteract = GameObject.Find("GeneralInteractionEH");
         genIntScript = genInteract.GetComponent<GeneralInteractionEventHandler>();
+        roomEdit = GameObject.Find("RoomEditUIEventHandler");
+        roomEditScript = roomEdit.GetComponent<RoomEditUIEventHandler>();
         objectRenderer = GetComponent<Renderer>();
-        if (objectRenderer != null)
-        {
-            originalColor = objectRenderer.material.color;
-        }
+        originalColor = Color.grey;
+        
     }
 
     void Update(){
@@ -32,34 +33,40 @@ public class SelectableObject : MonoBehaviour
             objEditScript.interact2D(Increment, this.gameObject, true);
         }
         checkSelection();
+        delWindow();
     }
 
     void OnMouseDown()
     {
-        objEditScript.objectSelected = this.gameObject;
         isSelected = !isSelected;
         UpdateColor();
     }
 
+    void OnMouseOver(){
+        if (Input.GetMouseButtonDown(0)){
+            roomEditScript.objectSelected = this.gameObject;
+        }
+    }
 
-    private void UpdateColor()
-    {
-        if (objectRenderer != null)
-        {
+    void delWindow(){
+        if(isSelected && (Input.GetKeyDown(KeyCode.Delete) || Input.GetKeyDown(KeyCode.Backspace))){
+            Destroy(this.gameObject);
+        }
+    }
+
+
+    private void UpdateColor(){
+        if (objectRenderer != null){
             objectRenderer.material.color = isSelected ? Color.green : originalColor;
         }
     }
 
     void checkSelection(){
-        if (Input.GetMouseButtonDown(0))
-        {
-            bool isPointerOverSelectableObject = genIntScript.IsPointerOverGameObject("Window") || genIntScript.IsPointerOverGameObject("Door");
+        bool isPointerOverSelectableObject = genIntScript.IsPointerOverGameObject("Window") || genIntScript.IsPointerOverGameObject("Door");
 
-            if (!isPointerOverSelectableObject || (!objEditScript.objectSelected.Equals(this.gameObject) && this.gameObject.GetComponent<SelectableObject>().isSelected))
-            {
-                isSelected = false;
-                UpdateColor();
-            }
+        if ((Input.GetMouseButtonDown(0) && !isPointerOverSelectableObject) || (!roomEditScript.objectSelected.Equals(this.gameObject) && this.gameObject.GetComponent<SelectableObject>().isSelected)){
+            isSelected = false;
+            UpdateColor();
         }
     }
 

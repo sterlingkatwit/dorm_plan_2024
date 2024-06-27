@@ -18,11 +18,15 @@ public class RoomEditUIEventHandler : MonoBehaviour
     public GeneralInteractionEventHandler genIntEH;
     public ObjEditUIEventHandler objEditEH;
     public GameObject windowPrefab, doorPrefab;
+    [HideInInspector] public GameObject objectSelected, objCurrentEdit;
     private Camera uiCamera;
+    private float initialZScale;
+
 
 
     void Start(){
         uiCamera = uiEH.canvMain.worldCamera;
+        initialZScale = 0.1f;
     }
 
     void Update(){
@@ -42,9 +46,9 @@ public class RoomEditUIEventHandler : MonoBehaviour
             windowX.text = "";
             windowY.text = "";
         }
-        else if (buttonName.Equals("RoomObjEditBtn")){
-            WindowEditFunc();
-        }
+        // else if (buttonName.Equals("RoomObjEditBtn")){
+        //     WindowEditFunc();
+        // }
 
     }
 
@@ -59,9 +63,9 @@ public class RoomEditUIEventHandler : MonoBehaviour
                     if (hit.collider.CompareTag("WallX") || hit.collider.CompareTag("WallZ")){
                         OpenUIWindow(hit.point, hit.collider.gameObject);
                     }
-                    else if (hit.collider.CompareTag("Window") || hit.collider.CompareTag("Door")){
-                        OpenUIWindow(hit.point, hit.collider.gameObject);
-                    }
+                    // else if (hit.collider.CompareTag("Window") || hit.collider.CompareTag("Door")){
+                    //     OpenUIWindow(hit.point, hit.collider.gameObject);
+                    // }
                 }
             }
             if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()){
@@ -92,23 +96,55 @@ public class RoomEditUIEventHandler : MonoBehaviour
 
             }
         }
-        else if (hitObject.CompareTag("Window") || hitObject.CompareTag("Door"))
-        {
-            if (wallObjEditWin != null)
-            {
-                if (wallEditWin.IsActive())
-                {
-                    wallEditWin.gameObject.SetActive(false);
-                }
+        // else if (hitObject.CompareTag("Window") || hitObject.CompareTag("Door"))
+        // {
+        //     if (wallObjEditWin != null){
+        //         if (wallEditWin.IsActive())
+        //         {
+        //             wallEditWin.gameObject.SetActive(false);
+        //         }
 
-                Vector3 screenPosition = mainCamera.WorldToScreenPoint(position);
+        //         objCurrentEdit = objectSelected;
 
-                RectTransform rectTransform = wallObjEditWin.GetComponent<RectTransform>();
-                rectTransform.position = screenPosition;
 
-                wallObjEditWin.gameObject.SetActive(true);
-            }
-        }
+        //         Vector3 screenPosition = mainCamera.WorldToScreenPoint(position);
+
+        //         RectTransform rectTransform = wallObjEditWin.GetComponent<RectTransform>();
+        //         rectTransform.position = screenPosition;
+
+        //         wallObjEditWin.gameObject.SetActive(true);
+
+        //         if (wallObjEditWin != null && objectSelected != null)
+        //         {
+        //             // Determine if the object is on a WallX or WallZ
+        //             bool isOnWallX = objectSelected.transform.parent.CompareTag("WallX");
+        //             bool isOnWallZ = objectSelected.transform.parent.CompareTag("WallZ");
+
+        //             // Get the size of the object
+        //             Vector3 size = objectSelected.GetComponent<Renderer>().bounds.size;
+
+        //             if (isOnWallZ)
+        //             {
+        //                 winEditX.text = size.x.ToString();
+        //                 winEditY.text = size.y.ToString();
+        //             }
+        //             else if (isOnWallX)
+        //             {
+        //                 winEditX.text = size.z.ToString();
+        //                 winEditY.text = size.y.ToString();
+        //             }
+        //             else
+        //             {
+        //                 Debug.LogError("Object is not on a WallX or WallZ.");
+        //             }
+
+        //         }
+
+        //         else{
+        //             Debug.LogWarning("UI Window reference is not set.");
+        //         }
+        //     }
+        // }
 
         if (objEdit2Win.IsActive() || objEdit3Win.IsActive() || objCreateWin.IsActive())
         {
@@ -119,24 +155,43 @@ public class RoomEditUIEventHandler : MonoBehaviour
     }
 
 
-    // Doesn't work yet. Add mouseOver function to wallItem and select object similar to how it's done for furniture.
-    // After selected, call it here to change values.
+    // I MIGHT DROP THIS SHIT. NO EDIT JUST DELETE AND MAKE A NEW ONE
 
-    void WindowEditFunc(){
-        if (genIntEH.IsPointerOverGameObject("Window") || genIntEH.IsPointerOverGameObject("Door")){
-            
-            if (wallEditWin != null && objEditEH.objectSelected != null){
 
-                winEditX.text = objEditEH.objectSelected.GetComponent<Renderer>().bounds.size.x.ToString();
-                winEditY.text = objEditEH.objectSelected.GetComponent<Renderer>().bounds.size.y.ToString();
-                objEditEH.objCurrentEdit = objEditEH.objectSelected;
-            }
-            else{
-                Debug.LogWarning("UI Window reference is not set.");
-            }
-        }
-    }
+    // void WindowEditFunc()
+    // {
+    //     if (genIntEH.IsPointerOverGameObject("Window") || genIntEH.IsPointerOverGameObject("Door"))
+    //     {
+    //         if (winEditX.text != null && winEditY.text != null)
+    //         {
+    //             // Get the new dimensions from the input fields
+    //             float newWidth = uiEH.castFloat(winEditX.text);
+    //             float newHeight = uiEH.castFloat(winEditY.text);
 
+    //             // Determine if the object is on a WallX or WallZ
+    //             bool isOnWallX = objCurrentEdit.transform.parent.CompareTag("WallX");
+    //             bool isOnWallZ = objCurrentEdit.transform.parent.CompareTag("WallZ");
+
+    //             // Get the parent's scale
+    //             Vector3 parentScale = objCurrentEdit.transform.parent.lossyScale;
+
+    //             // Calculate the desired local scale based on wall orientation
+    //             if (isOnWallZ)
+    //             {
+    //                 objCurrentEdit.transform.localScale = new Vector3(newWidth / parentScale.x, newHeight / parentScale.y, initialZScale / parentScale.z);
+    //             }
+    //             else if (isOnWallX)
+    //             {
+    //                 objCurrentEdit.gameObject.GetComponent<Renderer>().bounds.size.Set(initialZScale / parentScale.x, newHeight / parentScale.y, newWidth / parentScale.z);
+    //                 // objCurrentEdit.transform.localScale = new Vector3(initialZScale / parentScale.x, newHeight / parentScale.y, newWidth / parentScale.z);
+    //             }
+    //             else
+    //             {
+    //                 Debug.LogError("Object is not on a WallX or WallZ.");
+    //             }
+    //         }
+    //     }
+    // }
     
 
 
