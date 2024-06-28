@@ -64,11 +64,8 @@ public class FurnitureInteraction : MonoBehaviour
             // float horizontalInput = Input.GetAxis("Horizontal");
             // transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
         }
-
-
-
-        else if(contacts == 0){
-            transform.position = currentPos;    
+        else{
+            uiEHScript.selectedObjDisplay.text = "";
         }
 
         if (Input.GetKeyDown(KeyCode.Delete) && isRightClicked)
@@ -116,6 +113,8 @@ public class FurnitureInteraction : MonoBehaviour
 
     void moveObject(){
         isRightClicked = false;
+        uiEHScript.selectedObjDisplay.text = this.name;
+        
         // Object can be moved with mouse while holding shift.
         if(Input.GetKey(KeyCode.LeftShift) && Camera.main.orthographic){
             // Get the current mouse position in screen coordinates
@@ -156,6 +155,7 @@ public class FurnitureInteraction : MonoBehaviour
 
     void objectSelected(){
         isLeftClicked = false;
+        uiEHScript.selectedObjDisplay.text = this.name;
 
         if(Input.GetKey(KeyCode.LeftControl)){
 

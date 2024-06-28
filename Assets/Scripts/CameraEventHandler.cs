@@ -76,7 +76,6 @@ public class CameraEventHandler : MonoBehaviour
                 mainCam.transform.position = new Vector3(0, camDist, 0);
                 mainCam.transform.rotation = Quaternion.Euler(90, 0, 0);
                 orthoAdjust();
-                mainCam.rect = new Rect(0,0,0.85f,1);
 
                 //All walls active.
                 roomState(-1);
@@ -93,7 +92,6 @@ public class CameraEventHandler : MonoBehaviour
 
                 //Set 3D camera position. Last 3D position should be saved by camState.
                 mainCam.orthographic = false;
-                mainCam.rect = new Rect(0,0,0.85f,1);
                 cameraOrientation();
 
                 buttonText.SetText("2D");

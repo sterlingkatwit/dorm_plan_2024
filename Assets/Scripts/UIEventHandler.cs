@@ -18,7 +18,8 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofX;
     public TMP_InputField ofY;
     public TMP_InputField ofZ;
-    public Image objCreateImg;
+    public TMP_Text selectedObjDisplay;
+    public Image objCreateImg, roomCreateImg, toolBarImg;
     public Canvas canvMain;
 
     public float ifZ;
@@ -34,6 +35,9 @@ public class UIEventHandler : MonoBehaviour
 
     [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, floor, obj;
 
+    void Start(){
+        roomCreateImg.gameObject.SetActive(true);
+    }
 
     public void OnButtonPress()
     {
@@ -43,6 +47,8 @@ public class UIEventHandler : MonoBehaviour
             if (wallBottom == null)
             {
                 GenerateRoom();
+                roomCreateImg.gameObject.SetActive(false);
+                toolBarImg.gameObject.SetActive(true);
             }
             else
             {
