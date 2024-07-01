@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -199,8 +200,8 @@ public class ObjEditUIEventHandler : MonoBehaviour
         }
     }
 
-public Vector3 interact2D(float increment, GameObject furniture, bool isWindow)
-    {
+    
+    public Vector3 interact2D(float increment, GameObject furniture, bool isWindow){
         Vector3 currentPos = furniture.transform.position;
         float curX = furniture.transform.position.x;
         float curY = furniture.transform.position.y;
@@ -217,8 +218,7 @@ public Vector3 interact2D(float increment, GameObject furniture, bool isWindow)
         {
             if (Input.GetKeyDown(KeyCode.UpArrow) && !furniture.CompareTag("Door")){
                 currentPos = furniture.transform.position = new Vector3(curX, curY + increment, curZ);
-            }
-            else if (Input.GetKeyDown(KeyCode.DownArrow) && !furniture.CompareTag("Door")){
+            } else if (Input.GetKeyDown(KeyCode.DownArrow) && !furniture.CompareTag("Door")){
                 currentPos = furniture.transform.position = new Vector3(curX, curY - increment, curZ);
             }
             else if (isWallX){
@@ -226,20 +226,17 @@ public Vector3 interact2D(float increment, GameObject furniture, bool isWindow)
                     currentPos = furniture.transform.position = isWallRight ? 
                         new Vector3(curX, curY, curZ + increment) : 
                         new Vector3(curX, curY, curZ - increment);
-                }
-                else if (Input.GetKeyDown(KeyCode.RightArrow)){
+                } else if (Input.GetKeyDown(KeyCode.RightArrow)){
                     currentPos = furniture.transform.position = isWallRight ? 
                         new Vector3(curX, curY, curZ - increment) : 
                         new Vector3(curX, curY, curZ + increment);
                 }
-            }
-            else if (isWallZ){
+            } else if (isWallZ){
                 if (Input.GetKeyDown(KeyCode.LeftArrow)){
                     currentPos = furniture.transform.position = isWallBottom ? 
                         new Vector3(curX + increment, curY, curZ) : 
                         new Vector3(curX - increment, curY, curZ);
-                }
-                else if (Input.GetKeyDown(KeyCode.RightArrow)){
+                } else if (Input.GetKeyDown(KeyCode.RightArrow)){
                     currentPos = furniture.transform.position = isWallBottom ? 
                         new Vector3(curX - increment, curY, curZ) : 
                         new Vector3(curX + increment, curY, curZ);
@@ -248,16 +245,16 @@ public Vector3 interact2D(float increment, GameObject furniture, bool isWindow)
         }
         else{
             if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl)){
-                if (Input.GetKeyDown(KeyCode.UpArrow)){
+                if (Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.forward, increment, false)){
                     currentPos = furniture.transform.position = new Vector3(curX, curY, curZ + increment);
                 }
-                else if (Input.GetKeyDown(KeyCode.DownArrow)){
+                else if (Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.back, increment, false)){
                     currentPos = furniture.transform.position = new Vector3(curX, curY, curZ - increment);
                 }
-                else if (Input.GetKeyDown(KeyCode.LeftArrow)){
+                else if (Input.GetKeyDown(KeyCode.LeftArrow) && objMoveCheck(furniture, Vector3.left, increment, false)){
                     currentPos = furniture.transform.position = new Vector3(curX - increment, curY, curZ);
                 }
-                else if (Input.GetKeyDown(KeyCode.RightArrow)){
+                else if (Input.GetKeyDown(KeyCode.RightArrow) && objMoveCheck(furniture, Vector3.right, increment, false)){
                     currentPos = furniture.transform.position = new Vector3(curX + increment, curY, curZ);
                 }
             }
@@ -267,6 +264,48 @@ public Vector3 interact2D(float increment, GameObject furniture, bool isWindow)
     }
 
 
+    private bool objMoveCheck(GameObject furniture, Vector3 direction, float inc, bool third)
+    {
+        Collider furnitureCollider = furniture.GetComponent<Collider>();
+        Vector3 currentPos = furniture.transform.position;
+        Vector3 raycastStartPos = currentPos;
+
+        if (furnitureCollider == null){
+            Debug.LogError("Object to move must have a collider.");
+            return false;
+        }
+
+        // Determine the raycast starting position based on the direction
+        if (direction == Vector3.forward){
+            raycastStartPos = new Vector3(furniture.transform.position.x, furniture.transform.position.y, furnitureCollider.bounds.max.z);
+        }else if (direction == Vector3.back){
+            raycastStartPos = new Vector3(furniture.transform.position.x, furniture.transform.position.y, furnitureCollider.bounds.min.z);
+        }else if (direction == Vector3.left){
+            raycastStartPos = new Vector3(furnitureCollider.bounds.min.x, furniture.transform.position.y, furniture.transform.position.z);
+        }else if (direction == Vector3.right){
+            raycastStartPos = new Vector3(furnitureCollider.bounds.max.x, furniture.transform.position.y, furniture.transform.position.z);
+        }else if (third){
+            if (direction == Vector3.up){
+                raycastStartPos = new Vector3(furniture.transform.position.x, furnitureCollider.bounds.max.y, furniture.transform.position.z);
+            }else if (direction == Vector3.down){
+                raycastStartPos = new Vector3(furniture.transform.position.x, furnitureCollider.bounds.min.y, furniture.transform.position.z);
+            }
+        }
+
+        RaycastHit hit;
+        if (Physics.Raycast(raycastStartPos, direction, out hit, inc)){
+            // If a collision is detected, move the object to the point just before the collision
+            Vector3 moveDistance = direction * (hit.distance - 0.01f);
+            furniture.transform.position += moveDistance;
+            return false; // Object moved but hit something
+        }
+        else {
+            // If no collision is detected, move the object by the full increment
+            Vector3 moveDistance = direction * inc;
+            furniture.transform.position += moveDistance;
+            return true;
+        }
+    }
 
 
 
@@ -279,26 +318,26 @@ public Vector3 interact2D(float increment, GameObject furniture, bool isWindow)
         if(!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl)){
             switch(dir){
                 case 0:
-                    if(Input.GetKeyDown(KeyCode.UpArrow)){
+                    if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.right, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX+increment, curY, curZ);
                     }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow)){
+                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.left, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX-increment, curY, curZ);
                     }
                 break;
                 case 1:
-                    if(Input.GetKeyDown(KeyCode.UpArrow)){
+                    if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.up, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX, curY+increment, curZ);
                     }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow)){
+                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.down, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX, curY-increment, curZ);
                     }
                 break;
                 case 2:
-                    if(Input.GetKeyDown(KeyCode.UpArrow)){
+                    if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.forward, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX, curY, curZ+increment);
                     }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow)){
+                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.back, increment, false)){
                         currentPos = furniture.transform.position = new Vector3(curX, curY, curZ-increment);
                     }
                 break;

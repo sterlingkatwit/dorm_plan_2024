@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.EventSystems;
@@ -15,9 +16,10 @@ public class FurnitureInteraction : MonoBehaviour
     private UIEventHandler uiEHScript;
     private CameraEventHandler camEHScript;
     private ObjEditUIEventHandler objEditScript;
+
     public Color prevColor;
 
-
+    public string type;
     private bool isLeftClicked = false;
     private bool isRightClicked = false;
     private bool isRotatable = false;
@@ -114,6 +116,7 @@ public class FurnitureInteraction : MonoBehaviour
     void moveObject(){
         isRightClicked = false;
         uiEHScript.selectedObjDisplay.text = this.name;
+        uiEHScript.selectedObjTagDisplay.text = this.type;
         
         // Object can be moved with mouse while holding shift.
         if(Input.GetKey(KeyCode.LeftShift) && Camera.main.orthographic){
@@ -156,6 +159,7 @@ public class FurnitureInteraction : MonoBehaviour
     void objectSelected(){
         isLeftClicked = false;
         uiEHScript.selectedObjDisplay.text = this.name;
+        uiEHScript.selectedObjTagDisplay.text = this.type;
 
         if(Input.GetKey(KeyCode.LeftControl)){
 
@@ -192,7 +196,7 @@ public class FurnitureInteraction : MonoBehaviour
 
     // Object collisions
     void OnCollisionEnter(Collision col){ 
-        if(col.gameObject.CompareTag("Object")){
+        if(col.gameObject.CompareTag("WallX") || col.gameObject.CompareTag("WallZ")){
             // change material or smth
         }
     }

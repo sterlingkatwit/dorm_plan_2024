@@ -18,9 +18,11 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofX;
     public TMP_InputField ofY;
     public TMP_InputField ofZ;
-    public TMP_Text selectedObjDisplay;
+    public TMP_Text selectedObjDisplay, selectedObjTagDisplay;
     public Image objCreateImg, roomCreateImg, toolBarImg;
     public Canvas canvMain;
+    public TMP_Dropdown typeDropdown;
+
 
     public float ifZ;
     public GameObject wallPrefab;
@@ -37,6 +39,7 @@ public class UIEventHandler : MonoBehaviour
 
     void Start(){
         roomCreateImg.gameObject.SetActive(true);
+        TypeDropdownStart();
     }
 
     public void OnButtonPress()
@@ -79,6 +82,7 @@ public class UIEventHandler : MonoBehaviour
             obj.transform.localScale = new Vector3(x, y, z);
             obj.name = ofName.text;
             obj.GetComponent<FurnitureInteraction>().currentPos = new Vector3(0, y/2, 0);
+            obj.GetComponent<FurnitureInteraction>().type = typeDropdown.options[typeDropdown.value].text;
 
             // Reset the window on creation
             ofX.text = ofY.text = ofZ.text = ofName.text = "";
@@ -133,4 +137,20 @@ public class UIEventHandler : MonoBehaviour
         wall.name = name;
         return wall;
     } 
+
+
+    void TypeDropdownStart(){
+        // List of object types
+        List<string> objectTypes = new List<string> { "", "Bed", "Chair", "Desk", "Drawer" };
+
+        // Clear existing options
+        typeDropdown.ClearOptions();
+
+        // Add new options
+        typeDropdown.AddOptions(objectTypes);
+
+        // Optionally, set a default value (index 0 is the first item)
+        typeDropdown.value = 0;
+        typeDropdown.RefreshShownValue();
+    }
 }
