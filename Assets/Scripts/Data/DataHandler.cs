@@ -22,16 +22,13 @@ public class DataHandler : MonoBehaviour
     public Transform wallParent;
     public GameObject objPrefab;
     public Transform objParent;
+    public bool isSaved = false;
+    public int saveIndex;
 
     public Dictionary<int, GameData> allSaves = new Dictionary<int, GameData>();
 
     public void OnButtonPress()
     {
-        if (!PlayerPrefs.HasKey("currIndex"))
-        {
-            PlayerPrefs.SetInt("currIndex", 0);
-        }
-
         GameObject RoomTop = GameObject.Find("Room Walls");
         GameObject ObjTop = GameObject.Find("Objects");
         saveFile.setRoomSize(5);
@@ -63,9 +60,14 @@ public class DataHandler : MonoBehaviour
                 saveFile.objects[i - 1].scaleY = ObjTop.transform.GetChild(i).gameObject.transform.localScale.y;
                 saveFile.objects[i - 1].scaleZ = ObjTop.transform.GetChild(i).gameObject.transform.localScale.z;
             }
-            allSaves.Add(0, saveFile);
+            int currInt = PlayerPrefs.GetInt("currIndex", 0);
+            allSaves.Add(currInt, saveFile);
+            saveIndex = currInt;
+            currInt++;
+            PlayerPrefs.SetInt("currIndex", currInt);
             string save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
+            isSaved = true;
 
         } else if (buttonName.Equals("TestLoadBtn"))
         {
@@ -85,7 +87,7 @@ public class DataHandler : MonoBehaviour
                 wall.transform.parent = wallParent;
                 wall.name = load.room[i].name;
 
-               /* if (load.room[i].name.Equals("Floor")) {
+               /*if (load.room[i].name.Equals("Floor")) {
 
                 } 
                 else if (load.room[i].name.Equals("Floor"))
@@ -121,7 +123,7 @@ public class DataHandler : MonoBehaviour
                 obj.name = load.objects[i].name;
             }
 
-
+            isSaved = true;
             uiEH.RoomCreated = true;
         }
     }
