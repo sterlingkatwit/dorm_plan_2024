@@ -18,10 +18,11 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofX;
     public TMP_InputField ofY;
     public TMP_InputField ofZ;
-    public TMP_Text selectedObjDisplay, selectedObjTagDisplay;
+    public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText;
+    public TMP_InputField newTagInput;
     public Image objCreateImg, roomCreateImg, toolBarImg;
     public Canvas canvMain;
-    public TMP_Dropdown typeDropdown;
+    public TMP_Dropdown typeDropdown, typeDropdownEdit2D, typeDropdownEdit3D;
 
 
     public float ifZ;
@@ -30,6 +31,7 @@ public class UIEventHandler : MonoBehaviour
     public Transform wallParent;
     public Transform objParent;
     public bool RoomCreated = false;
+    [HideInInspector] public List<string> objectTypes = new List<string> { "", "Bed", "Chair", "Desk", "Drawer" };
 
     [HideInInspector] public GameObject selectedWall;
     [HideInInspector] public Vector3 pointOnWall;
@@ -39,6 +41,7 @@ public class UIEventHandler : MonoBehaviour
 
     void Start(){
         roomCreateImg.gameObject.SetActive(true);
+        newTagInput.onEndEdit.AddListener(OnInputFieldEndEdit);
         TypeDropdownStart();
     }
 
@@ -66,6 +69,15 @@ public class UIEventHandler : MonoBehaviour
         else if (buttonName.Equals("ObjCreateBtn"))
         {
             GenerateObj();
+        }
+        else if (buttonName.Equals("ObjTagAddBtn")){
+            if(newTagInput.IsActive()){
+                AddCustomType();
+            }
+            else{
+                newTagInput.gameObject.SetActive(true);
+                addTagText.gameObject.SetActive(true);
+            }
         }
     }
 
@@ -140,17 +152,33 @@ public class UIEventHandler : MonoBehaviour
 
 
     void TypeDropdownStart(){
-        // List of object types
-        List<string> objectTypes = new List<string> { "", "Bed", "Chair", "Desk", "Drawer" };
+        tagDropdownUpdate();
 
-        // Clear existing options
-        typeDropdown.ClearOptions();
-
-        // Add new options
-        typeDropdown.AddOptions(objectTypes);
-
-        // Optionally, set a default value (index 0 is the first item)
         typeDropdown.value = 0;
         typeDropdown.RefreshShownValue();
+    }
+
+    void AddCustomType(){
+        if(newTagInput.IsActive() && !newTagInput.text.Equals("")){
+            objectTypes.Add(newTagInput.text);
+            tagDropdownUpdate();
+            newTagInput.gameObject.SetActive(false);
+            addTagText.gameObject.SetActive(false);
+        }
+    }
+
+    void OnInputFieldEndEdit(string text){
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)){
+            AddCustomType();
+        }
+    }
+
+    public void tagDropdownUpdate(){
+        typeDropdown.ClearOptions();
+        typeDropdown.AddOptions(objectTypes);
+        typeDropdownEdit2D.ClearOptions();
+        typeDropdownEdit2D.AddOptions(objectTypes);
+        typeDropdownEdit3D.ClearOptions();
+        typeDropdownEdit3D.AddOptions(objectTypes);
     }
 }

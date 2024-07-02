@@ -10,9 +10,9 @@ using UnityEngine.UI;
 public class ObjEditUIEventHandler : MonoBehaviour
 {
     public Toggle togX, togY, togZ;
-    public TMP_InputField incrementValue, editX, editY, editZ, editName;
-    public TMP_Text rotateIncrement, currentRotation;
-    public TMP_Dropdown colorDropdown;
+    public TMP_InputField incrementValue, editX, editY, editZ, editName, objTagEditCreate2D, objTagEditCreate3D;
+    public TMP_Text rotateIncrement, currentRotation, objTagEditText2D, objTagEditText3D;
+    public TMP_Dropdown colorDropdown, objTagEditSelect2D, objTagEditSelect3D;
     private Dictionary<string, Color> colorDictionary;
 
     public Camera mainCam;
@@ -36,8 +36,12 @@ public class ObjEditUIEventHandler : MonoBehaviour
         togX.onValueChanged.AddListener(delegate { OnToggleChanged(togX); });
         togY.onValueChanged.AddListener(delegate { OnToggleChanged(togY); });
         togZ.onValueChanged.AddListener(delegate { OnToggleChanged(togZ); });
-        incrementValue.onEndEdit.AddListener(OnInputFieldEndEdit);
+        incrementValue.onEndEdit.AddListener(OnInputFieldEndEditRotate);
+        objTagEditCreate2D.onEndEdit.AddListener(OnInputFieldEndEditTag2D);
+        objTagEditCreate3D.onEndEdit.AddListener(OnInputFieldEndEditTag3D);
+
         colorDropdownStart();
+        TypeDropdownStart();
     }
 
     // Update is called once per frame
@@ -60,6 +64,24 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
         if (buttonName.Equals("ObjEditBtn")){
             editFunctionality();
+        }
+        else if(buttonName.Equals("ObjTagAddBtn2D")){
+            if(objTagEditCreate2D.IsActive()){
+                AddCustomType(false);
+            }
+            else{
+                objTagEditCreate2D.gameObject.SetActive(true);
+                objTagEditText2D.gameObject.SetActive(true);
+            }
+        }
+        else if(buttonName.Equals("ObjTagAddBtn3D")){
+            if(objTagEditCreate3D.IsActive()){
+                AddCustomType(true);
+            }
+            else{
+                objTagEditCreate3D.gameObject.SetActive(true);
+                objTagEditText3D.gameObject.SetActive(true);
+            }
         }
 
     }
@@ -89,6 +111,8 @@ public class ObjEditUIEventHandler : MonoBehaviour
                     editX.text = objectSelected.GetComponent<Renderer>().bounds.size.x.ToString();
                     editY.text = objectSelected.GetComponent<Renderer>().bounds.size.y.ToString();
                     editZ.text = objectSelected.GetComponent<Renderer>().bounds.size.z.ToString();
+                    objTagEditSelect2D.value = uiEH.objectTypes.IndexOf(objectSelected.GetComponent<FurnitureInteraction>().type);
+                    objTagEditSelect3D.value = uiEH.objectTypes.IndexOf(objectSelected.GetComponent<FurnitureInteraction>().type);
                     objCurrentEdit = objectSelected;
 
 
@@ -139,6 +163,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
     }
 
+    // Finish this function for 3D
     void editFunctionality(){
         if (editX.text != null && editY.text != null && editZ.text != null)
         {
@@ -148,17 +173,32 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
             objCurrentEdit.name = editName.text;
             objCurrentEdit.gameObject.transform.localScale = new Vector3 (x,y,z);
+            objCurrentEdit.GetComponent<FurnitureInteraction>().type = objTagEditSelect2D.options[objTagEditSelect2D.value].text;
         }
     }
 
 
 
-    void OnInputFieldEndEdit(string text)
+    void OnInputFieldEndEditRotate(string text)
     {
         // Check if the Enter key was pressed
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)){
             Increment = incrementToFloat();
             incTextValue = -1;
+        }
+    }
+
+    void OnInputFieldEndEditTag2D(string text)
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)){
+            AddCustomType(false);
+        }
+    }
+
+    void OnInputFieldEndEditTag3D(string text)
+    {
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.KeypadEnter)){
+            AddCustomType(true);
         }
     }
 
@@ -537,6 +577,34 @@ public class ObjEditUIEventHandler : MonoBehaviour
         {
             Debug.LogWarning("Selected color not found in dictionary.");
         }
+    }
+
+    void TypeDropdownStart(){
+        uiEH.tagDropdownUpdate();
+
+        objTagEditSelect2D.value = 0;
+        objTagEditSelect2D.RefreshShownValue();
+        objTagEditSelect3D.value = 0;
+        objTagEditSelect3D.RefreshShownValue();
+    }
+
+    void AddCustomType(bool dim){
+        if(!dim){
+            if(objTagEditCreate2D.IsActive() && !objTagEditCreate2D.text.Equals("")){
+                uiEH.objectTypes.Add(objTagEditCreate2D.text);
+                uiEH.tagDropdownUpdate();
+                objTagEditCreate2D.gameObject.SetActive(false);
+                objTagEditText2D.gameObject.SetActive(false);
+            }
+        } else {
+            if(objTagEditCreate3D.IsActive() && !objTagEditCreate3D.text.Equals("")){
+                uiEH.objectTypes.Add(objTagEditCreate3D.text);
+                uiEH.tagDropdownUpdate();
+                objTagEditCreate3D.gameObject.SetActive(false);
+                objTagEditText3D.gameObject.SetActive(false);
+            }
+        }
+
     }
 
 
