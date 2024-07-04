@@ -16,7 +16,7 @@ public class DataHandler : MonoBehaviour
 {
     GameData saveFile = new GameData();
 
-    [SerializeField] private UIEventHandler uiEH;
+  //  [SerializeField] private UIEventHandler uiEH;
 
     public GameObject wallPrefab;
     public Transform wallParent;
@@ -25,7 +25,7 @@ public class DataHandler : MonoBehaviour
     public bool isSaved = false;
     public int saveIndex;
 
-    public Dictionary<int, GameData> allSaves = new Dictionary<int, GameData>();
+    public Dictionary<string, GameData> allSaves = new Dictionary<string, GameData>();
 
     public void OnButtonPress()
     {
@@ -60,11 +60,11 @@ public class DataHandler : MonoBehaviour
                 saveFile.objects[i - 1].scaleY = ObjTop.transform.GetChild(i).gameObject.transform.localScale.y;
                 saveFile.objects[i - 1].scaleZ = ObjTop.transform.GetChild(i).gameObject.transform.localScale.z;
             }
-            int currInt = PlayerPrefs.GetInt("currIndex", 0);
-            allSaves.Add(currInt, saveFile);
-            saveIndex = currInt;
-            currInt++;
-            PlayerPrefs.SetInt("currIndex", currInt);
+            //int currInt = PlayerPrefs.GetInt("currIndex", 0);
+            allSaves.Add("test", saveFile);
+            //saveIndex = currInt;
+            //currInt++;
+            //PlayerPrefs.SetInt("currIndex", currInt);
             string save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
             isSaved = true;
@@ -72,8 +72,8 @@ public class DataHandler : MonoBehaviour
         } else if (buttonName.Equals("TestLoadBtn"))
         {
             string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
-            allSaves = JsonConvert.DeserializeObject<Dictionary<int, GameData>>(save);
-            GameData load = allSaves[0];
+            allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+            GameData load = allSaves["test"];
             int roomSize = load.getRoomSize();
             int objSize = load.getObjSize();
             
@@ -124,7 +124,7 @@ public class DataHandler : MonoBehaviour
             }
 
             isSaved = true;
-            uiEH.RoomCreated = true;
+           // uiEH.RoomCreated = true;
         }
     }
 }
