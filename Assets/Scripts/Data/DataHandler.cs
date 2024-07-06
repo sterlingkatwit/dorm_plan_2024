@@ -11,12 +11,15 @@ using Button = UnityEngine.UI.Button;
 using UnityEditor.TerrainTools;
 using System.Drawing;
 using UnityEditor;
+using TMPro;
 
 public class DataHandler : MonoBehaviour 
 {
     GameData saveFile = new GameData();
 
-  //  [SerializeField] private UIEventHandler uiEH;
+    //  [SerializeField] private UIEventHandler uiEH;
+
+    public TMP_InputField saveAsTxt;
 
     public GameObject wallPrefab;
     public Transform wallParent;
@@ -34,7 +37,7 @@ public class DataHandler : MonoBehaviour
         saveFile.setRoomSize(5);
         saveFile.setObjSize(ObjTop.transform.childCount - 1);
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
-        if (buttonName.Equals("TestSaveBtn"))
+        if (buttonName.Equals("SaveAsCfrm"))
         {
             for (int i = 0; i < RoomTop.transform.childCount; i++)
             {
@@ -61,14 +64,16 @@ public class DataHandler : MonoBehaviour
                 saveFile.objects[i - 1].scaleZ = ObjTop.transform.GetChild(i).gameObject.transform.localScale.z;
             }
             //int currInt = PlayerPrefs.GetInt("currIndex", 0);
-            allSaves.Add("test", saveFile);
+            string saveName = saveAsTxt.text;
+            allSaves.Add(saveName, saveFile);
             //saveIndex = currInt;
             //currInt++;
             //PlayerPrefs.SetInt("currIndex", currInt);
             string save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
+            Debug.Log("Save suceed");
+            Debug.Log(save);
             isSaved = true;
-
         } else if (buttonName.Equals("TestLoadBtn"))
         {
             string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");

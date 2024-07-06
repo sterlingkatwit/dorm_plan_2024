@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 using UnityEngine.EventSystems;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
