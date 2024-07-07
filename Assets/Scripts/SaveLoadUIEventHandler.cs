@@ -17,9 +17,7 @@ public class SaveLoadUI : MonoBehaviour
     public TMP_Dropdown dropdown;
     private bool isMainPressed = false;
     private bool isSaveAsPressed = false;
-    private bool isSavePressed = false;
     private bool isLoadPressed = false;
-    private bool isSidePressed = false;
 
     public void OnButtonPress()
     {
@@ -40,19 +38,19 @@ public class SaveLoadUI : MonoBehaviour
         }
         else if (buttonName.Equals("SaveAsBtn") && !isSaveAsPressed)
         {
+            isLoadPressed = false;
             loadScreen.gameObject.SetActive(false);
             saveasScreen.gameObject.SetActive(true);
             isSaveAsPressed = true;
-            isSidePressed = true;
         }
         else if (buttonName.Equals("SaveAsBtn") && isSaveAsPressed)
         {
             saveasScreen.gameObject.SetActive(false);
             isSaveAsPressed = false;
-            isSidePressed = false;
         }
         else if (buttonName.Equals("LoadBtn") && !isLoadPressed)
         {
+            isSaveAsPressed = false;
             saveasScreen.gameObject.SetActive(false);
             loadScreen.gameObject.SetActive(true);
 
@@ -63,18 +61,15 @@ public class SaveLoadUI : MonoBehaviour
             for (int x = 0; x < allSaves.Count; x++)
             {
                 saveNames.Add(allSaves.Keys.ElementAt(x));
-                Debug.Log(allSaves.Keys.ElementAt(x));
             }
 
             dropdown.AddOptions(saveNames);
             isLoadPressed = true;
-            isSidePressed = true;
         }
         else if (buttonName.Equals("LoadBtn") && isLoadPressed)
         {
             loadScreen.gameObject.SetActive(false);
             isLoadPressed = false;
-            isSidePressed = false;
         }
     }
 }
