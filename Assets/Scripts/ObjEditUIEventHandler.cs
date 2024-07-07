@@ -514,7 +514,8 @@ public class ObjEditUIEventHandler : MonoBehaviour
     void ObjectRotate(){
         String[] incValues = {"1", "5", "15", "30", "60", "90"};
         if(objEditWindow2D.IsActive() || objEditWindow3D.IsActive()){
-            currentRotation.text = rotateIncrement3D.text = Math.Round(objCurrentEdit.transform.eulerAngles.y).ToString();
+            currentRotation.text = Math.Round(objCurrentEdit.transform.eulerAngles.y).ToString();
+            currentRotation3D.text = Math.Round(objCurrentEdit.transform.eulerAngles.y).ToString();
             if(Input.GetKey(KeyCode.LeftControl)){
 
 
@@ -523,7 +524,8 @@ public class ObjEditUIEventHandler : MonoBehaviour
                     if(incrementArray > 5){
                         incrementArray = 0;
                     }
-                    rotateIncrement.text = rotateIncrement3D.text = incValues[incrementArray];
+                    rotateIncrement.text = incValues[incrementArray]; 
+                    rotateIncrement3D.text = incValues[incrementArray];
                     int.TryParse(rotateIncrement.text, out IncrementRotate);
                 }
                 else if(Input.GetKeyDown(KeyCode.DownArrow)){
@@ -531,7 +533,8 @@ public class ObjEditUIEventHandler : MonoBehaviour
                     if(incrementArray < 0){
                         incrementArray = 5;
                     }
-                    rotateIncrement.text = rotateIncrement3D.text = incValues[incrementArray];
+                    rotateIncrement.text = incValues[incrementArray];
+                    rotateIncrement3D.text = incValues[incrementArray];
                     int.TryParse(rotateIncrement.text, out IncrementRotate);
                 }
             }
@@ -540,11 +543,13 @@ public class ObjEditUIEventHandler : MonoBehaviour
             if(Input.GetKey(KeyCode.LeftControl)){
                 if(Input.GetKeyDown(KeyCode.RightArrow)){
                     objectSelected.transform.Rotate(0, IncrementRotate, 0);
-                    currentRotation.text = currentRotation3D.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();
+                    currentRotation.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();
+                    currentRotation3D.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();
                 }
                 else if(Input.GetKeyDown(KeyCode.LeftArrow)){
                     objectSelected.transform.Rotate(0, -IncrementRotate, 0);
-                    currentRotation.text = currentRotation3D.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();   
+                    currentRotation.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();   
+                    currentRotation3D.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();
                 }
             }
         }
