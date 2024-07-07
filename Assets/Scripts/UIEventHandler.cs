@@ -12,32 +12,34 @@ using Image = UnityEngine.UI.Image;
 
 public class UIEventHandler : MonoBehaviour
 {
-    public TMP_InputField ifX;
-    public TMP_InputField ifY;
+    public TMP_InputField ifX, ifY, ifZ;
+
     public TMP_InputField ofName;
     public TMP_InputField ofX;
     public TMP_InputField ofY;
     public TMP_InputField ofZ;
-    public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText;
+    public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText, freeSpaceText;
     public TMP_InputField newTagInput;
-    public Image objCreateImg, roomCreateImg, toolBarImg;
+    public Image objCreateImg, roomCreateImg, toolBarImg, dropdownImg;
     public Canvas canvMain;
     public TMP_Dropdown typeDropdown, typeDropdownEdit2D, typeDropdownEdit3D;
-
-
-    public float ifZ;
     public GameObject wallPrefab;
     public GameObject objPrefab;
     public Transform wallParent;
     public Transform objParent;
     public bool RoomCreated = false;
+
+    public Material outlineMaterial;
     [HideInInspector] public List<string> objectTypes = new List<string> { "", "Bed", "Chair", "Desk", "Drawer" };
+    [HideInInspector] public List<GameObject> furnitureList = new List<GameObject>();
+
 
     [HideInInspector] public GameObject selectedWall;
     [HideInInspector] public Vector3 pointOnWall;
 
 
     [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, floor, obj;
+    private float roomWidth, roomLength;
 
     void Start(){
         roomCreateImg.gameObject.SetActive(true);
@@ -48,6 +50,8 @@ public class UIEventHandler : MonoBehaviour
     public void OnButtonPress()
     {
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
+        TMP_Text buttonText = EventSystem.current.currentSelectedGameObject.GetComponentInChildren<TMP_Text>();
+
         if (buttonName.Equals("RoomCreateBtn"))
         {
             if (wallBottom == null)
@@ -79,6 +83,15 @@ public class UIEventHandler : MonoBehaviour
                 addTagText.gameObject.SetActive(true);
             }
         }
+        else if (buttonName.Equals("DropdownBtn")){
+            if(!dropdownImg.IsActive()){
+                buttonText.text = "v";
+                dropdownImg.gameObject.SetActive(true);
+            } else {
+                buttonText.text = "<";
+                dropdownImg.gameObject.SetActive(false);
+            }
+        }
     }
 
     void GenerateObj()
@@ -96,6 +109,8 @@ public class UIEventHandler : MonoBehaviour
             obj.GetComponent<FurnitureInteraction>().currentPos = new Vector3(0, y/2, 0);
             obj.GetComponent<FurnitureInteraction>().type = typeDropdown.options[typeDropdown.value].text;
 
+            AddFurniture(obj);
+
             // Reset the window on creation
             ofX.text = ofY.text = ofZ.text = ofName.text = "";
             objCreateImg.gameObject.SetActive(false);
@@ -107,19 +122,22 @@ public class UIEventHandler : MonoBehaviour
         if(ifX.text != null && ifY.text != null){
             float x = castFloat(ifX.text);
             float y = castFloat(ifY.text);
-            ifZ = 3f;
+            float z = castFloat(ifZ.text);
+
+            roomWidth = x;
+            roomLength = y;
 
             // Half values to help build around (0,0). 0.1f accounts for the scaling of the walls and
             // ensures the area of the inside is x*y.
             float halfX = (x / 2) + 0.1f;
-            float halfY = (y / 2) + 0.1f;
+            float halfZ = (z / 2) + 0.1f;
 
             // Create and position the four walls around (0,0). In order: Bottom/Top/Left/Right
-            wallBottom = BuildWall(new Vector3(0, ifZ / 2, -halfY), new Vector3(x, ifZ, 0.2f), "BottomWall");
-            wallTop = BuildWall(new Vector3(0, ifZ / 2, halfY), new Vector3(x, ifZ, 0.2f), "TopWall");
-            wallLeft = BuildWall(new Vector3(-halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "LeftWall");
-            wallRight = BuildWall(new Vector3(halfX, ifZ / 2, 0), new Vector3(0.2f, ifZ, y), "RightWall");
-            floor = BuildWall(new Vector3(0, -0.1f, 0), new Vector3(x+0.4f, 0.2f, y+0.4f), "Floor");
+            wallBottom = BuildWall(new Vector3(0, y / 2, -halfZ), new Vector3(x, y, 0.2f), "BottomWall");
+            wallTop = BuildWall(new Vector3(0, y / 2, halfZ), new Vector3(x, y, 0.2f), "TopWall");
+            wallLeft = BuildWall(new Vector3(-halfX, y / 2, 0), new Vector3(0.2f, y, z), "LeftWall");
+            wallRight = BuildWall(new Vector3(halfX, y / 2, 0), new Vector3(0.2f, y, z), "RightWall");
+            floor = BuildWall(new Vector3(0, -0.1f, 0), new Vector3(x+0.4f, 0.2f, z+0.4f), "Floor");
 
             Renderer floorRenderer = floor.GetComponent<Renderer>();
             Material floorMaterial = new Material(Shader.Find("Standard"));
@@ -147,6 +165,12 @@ public class UIEventHandler : MonoBehaviour
         wall.transform.localScale = scale;
         wall.transform.parent = wallParent;
         wall.name = name;
+
+        Renderer wallRenderer = wall.GetComponent<Renderer>();
+        Material wallMaterial = new Material(Shader.Find("Standard"));
+        wallMaterial.color = new Color(0.8f, 0.8f, 0.8f);
+        wallRenderer.material = wallMaterial;
+
         return wall;
     } 
 
@@ -180,5 +204,51 @@ public class UIEventHandler : MonoBehaviour
         typeDropdownEdit2D.AddOptions(objectTypes);
         typeDropdownEdit3D.ClearOptions();
         typeDropdownEdit3D.AddOptions(objectTypes);
+    }
+
+    public void AddFurniture(GameObject furniture){
+        furnitureList.Add(furniture);
+        UpdateFloorSpaceText();
+    }
+
+    private float CalculateTotalFloorSpace(){
+        float totalFloorSpace = 0f;
+
+        foreach (GameObject furniture in furnitureList){
+            Vector3 furnitureSize = GetFurnitureSize(furniture);
+            totalFloorSpace += furnitureSize.x * furnitureSize.z;
+        }
+
+        return totalFloorSpace;
+    }
+
+    private Vector3 GetFurnitureSize(GameObject furniture){
+        MeshFilter meshFilter = furniture.GetComponent<MeshFilter>();
+        Collider collider = furniture.GetComponent<Collider>();
+
+        Vector3 size = Vector3.zero;
+
+        if (meshFilter != null){
+            Vector3 meshSize = meshFilter.mesh.bounds.size;
+            Vector3 objectScale = furniture.transform.localScale;
+            size = Vector3.Scale(meshSize, objectScale);
+        } else if (collider != null){
+            Vector3 colliderSize = collider.bounds.size;
+            Vector3 objectScale = furniture.transform.localScale;
+            size = new Vector3(
+                colliderSize.x / furniture.transform.lossyScale.x,
+                colliderSize.z / furniture.transform.lossyScale.z,
+                colliderSize.y / furniture.transform.lossyScale.y
+            );
+        }
+
+        return size;
+    }
+
+    // Method to update the text element with the total floor space
+    private void UpdateFloorSpaceText(){
+        float totalFloorSpace = CalculateTotalFloorSpace();
+        float roomTotalSpace = roomWidth * roomLength;
+        freeSpaceText.text = totalFloorSpace.ToString("F2") + " / " + roomTotalSpace.ToString("F2") + " ft²";
     }
 }

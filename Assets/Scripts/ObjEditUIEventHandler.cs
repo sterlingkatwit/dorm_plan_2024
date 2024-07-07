@@ -9,9 +9,9 @@ using UnityEngine.UI;
 
 public class ObjEditUIEventHandler : MonoBehaviour
 {
-    public Toggle togX, togY, togZ;
-    public TMP_InputField incrementValue, editX, editY, editZ, editName, objTagEditCreate2D, objTagEditCreate3D;
-    public TMP_Text rotateIncrement, currentRotation, objTagEditText2D, objTagEditText3D;
+    public Toggle togX, togY;
+    public TMP_InputField incrementValue, editX, editY, editZ, editName, editX3D, editY3D, editZ3D, editName3D, objTagEditCreate2D, objTagEditCreate3D;
+    public TMP_Text rotateIncrement, currentRotation, rotateIncrement3D, currentRotation3D, objTagEditText2D, objTagEditText3D;
     public TMP_Dropdown colorDropdown, objTagEditSelect2D, objTagEditSelect3D;
     private Dictionary<string, Color> colorDictionary;
 
@@ -29,13 +29,12 @@ public class ObjEditUIEventHandler : MonoBehaviour
     void Start()
     {
         incTextValue = 0;
-        interact3Dvalue = -1;
+        interact3Dvalue = 0;
         Increment = 1;
         incrementArray = 2;
         IncrementRotate = 15;
         togX.onValueChanged.AddListener(delegate { OnToggleChanged(togX); });
         togY.onValueChanged.AddListener(delegate { OnToggleChanged(togY); });
-        togZ.onValueChanged.AddListener(delegate { OnToggleChanged(togZ); });
         incrementValue.onEndEdit.AddListener(OnInputFieldEndEditRotate);
         objTagEditCreate2D.onEndEdit.AddListener(OnInputFieldEndEditTag2D);
         objTagEditCreate3D.onEndEdit.AddListener(OnInputFieldEndEditTag3D);
@@ -107,12 +106,22 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
                     window.gameObject.SetActive(true);
 
-                    editName.text = objectSelected.name;
-                    editX.text = objectSelected.GetComponent<Renderer>().bounds.size.x.ToString();
-                    editY.text = objectSelected.GetComponent<Renderer>().bounds.size.y.ToString();
-                    editZ.text = objectSelected.GetComponent<Renderer>().bounds.size.z.ToString();
-                    objTagEditSelect2D.value = uiEH.objectTypes.IndexOf(objectSelected.GetComponent<FurnitureInteraction>().type);
-                    objTagEditSelect3D.value = uiEH.objectTypes.IndexOf(objectSelected.GetComponent<FurnitureInteraction>().type);
+
+                    MeshFilter meshFilter = objectSelected.GetComponent<MeshFilter>();
+
+                    // Makes sure when objecct dimensions are loaded up that they represent the actual dimensions.
+                    if (meshFilter != null){
+                        Vector3 meshSize = meshFilter.mesh.bounds.size;
+                        Vector3 objectScale = objectSelected.transform.localScale;
+                        Vector3 trueSize = Vector3.Scale(meshSize, objectScale);
+
+                        editX.text = editX3D.text = trueSize.x.ToString();
+                        editY.text = editY3D.text = trueSize.y.ToString();
+                        editZ.text = editZ3D.text = trueSize.z.ToString();
+                    }
+
+                    editName.text = editName3D.text = objectSelected.name;
+                    objTagEditSelect2D.value = objTagEditSelect3D.value = uiEH.objectTypes.IndexOf(objectSelected.GetComponent<FurnitureInteraction>().type);
                     objCurrentEdit = objectSelected;
 
 
@@ -158,22 +167,38 @@ public class ObjEditUIEventHandler : MonoBehaviour
             }
         }
         if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()){
-            window.gameObject.SetActive(false);
+            if(objEditWindow2D.IsActive()){
+                objEditWindow2D.gameObject.SetActive(false);
+            }
+            if(objEditWindow3D.IsActive()){
+                objEditWindow3D.gameObject.SetActive(false);
+            }
         }
 
     }
 
     // Finish this function for 3D
     void editFunctionality(){
-        if (editX.text != null && editY.text != null && editZ.text != null)
-        {
-            float x = uiEH.castFloat(editX.text);
-            float y = uiEH.castFloat(editY.text);
-            float z = uiEH.castFloat(editZ.text);
+        if(mainCam.orthographic){
+            if (editX.text != null && editY.text != null && editZ.text != null){
+                float x = uiEH.castFloat(editX.text);
+                float y = uiEH.castFloat(editY.text);
+                float z = uiEH.castFloat(editZ.text);
 
-            objCurrentEdit.name = editName.text;
-            objCurrentEdit.gameObject.transform.localScale = new Vector3 (x,y,z);
-            objCurrentEdit.GetComponent<FurnitureInteraction>().type = objTagEditSelect2D.options[objTagEditSelect2D.value].text;
+                objCurrentEdit.name = editName.text;
+                objCurrentEdit.gameObject.transform.localScale = new Vector3 (x,y,z);
+                objCurrentEdit.GetComponent<FurnitureInteraction>().type = objTagEditSelect2D.options[objTagEditSelect2D.value].text;
+            }
+        } else {
+            if (editX3D.text != null && editY3D.text != null && editZ3D.text != null){
+                float x = uiEH.castFloat(editX3D.text);
+                float y = uiEH.castFloat(editY3D.text);
+                float z = uiEH.castFloat(editZ3D.text);
+
+                objCurrentEdit.name = editName3D.text;
+                objCurrentEdit.gameObject.transform.localScale = new Vector3 (x,y,z);
+                objCurrentEdit.GetComponent<FurnitureInteraction>().type = objTagEditSelect3D.options[objTagEditSelect3D.value].text;
+            }
         }
     }
 
@@ -215,10 +240,6 @@ public class ObjEditUIEventHandler : MonoBehaviour
             {
                 togY.isOn = false;
             }
-            if (changedToggle != togZ)
-            {
-                togZ.isOn = false;
-            }
         }
 
         interact3D();
@@ -231,9 +252,6 @@ public class ObjEditUIEventHandler : MonoBehaviour
         }
         else if(togY.isOn){
             interact3Dvalue = 1;
-        }
-        else if(togZ.isOn){
-            interact3Dvalue = 2;
         }
         else{
             interact3Dvalue = -1;
@@ -337,7 +355,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
             // If a collision is detected, move the object to the point just before the collision
             Vector3 moveDistance = direction * (hit.distance - 0.01f);
             furniture.transform.position += moveDistance;
-            return false; // Object moved but hit something
+            return false;
         }
         else {
             // If no collision is detected, move the object by the full increment
@@ -358,11 +376,17 @@ public class ObjEditUIEventHandler : MonoBehaviour
         if(!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl)){
             switch(dir){
                 case 0:
-                    if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.right, increment, true)){
+                    if(Input.GetKeyDown(KeyCode.RightArrow) && objMoveCheck(furniture, Vector3.right, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX+increment, curY, curZ);
                     }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.left, increment, true)){
+                    else if(Input.GetKeyDown(KeyCode.LeftArrow) && objMoveCheck(furniture, Vector3.left, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX-increment, curY, curZ);
+                    }
+                    else if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.forward, increment, true)){
+                        currentPos = furniture.transform.position = new Vector3(curX, curY, curZ+increment);
+                    }
+                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.back, increment, false)){
+                        currentPos = furniture.transform.position = new Vector3(curX, curY, curZ-increment);
                     }
                 break;
                 case 1:
@@ -371,14 +395,6 @@ public class ObjEditUIEventHandler : MonoBehaviour
                     }
                     else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.down, increment, true)){
                         currentPos = furniture.transform.position = new Vector3(curX, curY-increment, curZ);
-                    }
-                break;
-                case 2:
-                    if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.forward, increment, true)){
-                        currentPos = furniture.transform.position = new Vector3(curX, curY, curZ+increment);
-                    }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.back, increment, false)){
-                        currentPos = furniture.transform.position = new Vector3(curX, curY, curZ-increment);
                     }
                 break;
             }
@@ -498,7 +514,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
     void ObjectRotate(){
         String[] incValues = {"1", "5", "15", "30", "60", "90"};
         if(objEditWindow2D.IsActive() || objEditWindow3D.IsActive()){
-            currentRotation.text = Math.Round(objCurrentEdit.transform.eulerAngles.y).ToString();
+            currentRotation.text = rotateIncrement3D.text = Math.Round(objCurrentEdit.transform.eulerAngles.y).ToString();
             if(Input.GetKey(KeyCode.LeftControl)){
 
 
@@ -507,7 +523,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
                     if(incrementArray > 5){
                         incrementArray = 0;
                     }
-                    rotateIncrement.text = incValues[incrementArray];
+                    rotateIncrement.text = rotateIncrement3D.text = incValues[incrementArray];
                     int.TryParse(rotateIncrement.text, out IncrementRotate);
                 }
                 else if(Input.GetKeyDown(KeyCode.DownArrow)){
@@ -515,7 +531,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
                     if(incrementArray < 0){
                         incrementArray = 5;
                     }
-                    rotateIncrement.text = incValues[incrementArray];
+                    rotateIncrement.text = rotateIncrement3D.text = incValues[incrementArray];
                     int.TryParse(rotateIncrement.text, out IncrementRotate);
                 }
             }
@@ -524,11 +540,11 @@ public class ObjEditUIEventHandler : MonoBehaviour
             if(Input.GetKey(KeyCode.LeftControl)){
                 if(Input.GetKeyDown(KeyCode.RightArrow)){
                     objectSelected.transform.Rotate(0, IncrementRotate, 0);
-                    currentRotation.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();
+                    currentRotation.text = currentRotation3D.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();
                 }
                 else if(Input.GetKeyDown(KeyCode.LeftArrow)){
                     objectSelected.transform.Rotate(0, -IncrementRotate, 0);
-                    currentRotation.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();   
+                    currentRotation.text = currentRotation3D.text = Math.Round(objectSelected.transform.eulerAngles.y).ToString();   
                 }
             }
         }

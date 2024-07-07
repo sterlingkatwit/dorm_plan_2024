@@ -16,6 +16,8 @@ public class FurnitureInteraction : MonoBehaviour
     private UIEventHandler uiEHScript;
     private CameraEventHandler camEHScript;
     private ObjEditUIEventHandler objEditScript;
+    private Material defaultMaterial;
+    private Renderer objectRenderer;
 
     public Color prevColor;
 
@@ -42,6 +44,7 @@ public class FurnitureInteraction : MonoBehaviour
         objEditEH = GameObject.Find("ObjEditUIEventHandler");
         objEditScript = objEditEH.GetComponent<ObjEditUIEventHandler>();
 
+        // shaderStart();
         rb = gameObject.GetComponent<Rigidbody>();
         prevColor = Color.white;
     }
@@ -61,10 +64,6 @@ public class FurnitureInteraction : MonoBehaviour
 
         } else if (isRightClicked){
             objectSelected();
-            //Edited out for now.
-            // float rotationSpeed = 50f;
-            // float horizontalInput = Input.GetAxis("Horizontal");
-            // transform.Rotate(Vector3.up * horizontalInput * rotationSpeed * Time.deltaTime);
         }
         else{
             uiEHScript.selectedObjDisplay.text = "";
@@ -109,6 +108,14 @@ public class FurnitureInteraction : MonoBehaviour
         {
             GetComponent<Renderer>().material.SetColor("_Color", prevColor);
         }
+        // if (swtch)
+        // {
+        //     EnableShaderMaterial();
+        // }
+        // else
+        // {
+        //     DisableShaderMaterial();
+        // }
 
         return swtch;
     }
@@ -128,6 +135,20 @@ public class FurnitureInteraction : MonoBehaviour
 
             // Update the position of the object to the mouse position on only X and Z axes.
             currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
+        }
+
+
+        if(Input.GetKey(KeyCode.LeftControl)){
+
+            if(Input.GetKeyDown(KeyCode.C)){
+                copyObj();
+            }
+            else if(Input.GetKeyDown(KeyCode.X)){
+                copyObj();
+                Destroy(this.gameObject);
+            }
+        } else if(Input.GetKey(KeyCode.Delete) || Input.GetKey(KeyCode.Backspace)){
+            Destroy(this.gameObject);
         }
 
 
@@ -188,7 +209,8 @@ public class FurnitureInteraction : MonoBehaviour
         (!objEditScript.objectSelected.Equals(this.gameObject) && objEditScript.objectSelected.GetComponent<FurnitureInteraction>().isRightClicked)){
             isRightClicked = false;
             isLeftClicked = false;
-            GetComponent<Renderer>().material.SetColor("_Color", prevColor);
+            this.GetComponent<Renderer>().material.SetColor("_Color", prevColor);
+            // DisableShaderMaterial();
         }
 
     }
@@ -205,4 +227,39 @@ public class FurnitureInteraction : MonoBehaviour
             // change material or smth
         }
     }
+
+    void shaderStart(){
+        objectRenderer = GetComponent<Renderer>();
+        
+        if (objectRenderer != null && objectRenderer.materials.Length > 0)
+        {
+            defaultMaterial = objectRenderer.materials[0];
+        }
+    }
+
+    public void EnableShaderMaterial()
+    {
+        if (objectRenderer != null && uiEHScript.outlineMaterial != null)
+        {
+            // Create a new array with an additional slot for the shader material
+            Material[] materials = new Material[2];
+            materials[0] = defaultMaterial; 
+            materials[1] = uiEHScript.outlineMaterial;
+
+            objectRenderer.materials = materials;
+        }
+    }
+
+    public void DisableShaderMaterial()
+    {
+        if (objectRenderer != null)
+        {
+            // Revert to the default material only
+            Material[] materials = new Material[1];
+            materials[0] = defaultMaterial;
+
+            objectRenderer.materials = materials;
+        }
+    }
+    
 }
