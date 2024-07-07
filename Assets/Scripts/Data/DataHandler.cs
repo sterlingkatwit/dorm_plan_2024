@@ -20,6 +20,7 @@ public class DataHandler : MonoBehaviour
     //  [SerializeField] private UIEventHandler uiEH;
 
     public TMP_InputField saveAsTxt;
+    public TMP_Dropdown loadKey;
 
     public GameObject wallPrefab;
     public Transform wallParent;
@@ -39,6 +40,8 @@ public class DataHandler : MonoBehaviour
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
         if (buttonName.Equals("SaveAsCfrm"))
         {
+            string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
+            allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
             for (int i = 0; i < RoomTop.transform.childCount; i++)
             {
                 saveFile.room[i].name = RoomTop.transform.GetChild(i).gameObject.name;
@@ -63,22 +66,24 @@ public class DataHandler : MonoBehaviour
                 saveFile.objects[i - 1].scaleY = ObjTop.transform.GetChild(i).gameObject.transform.localScale.y;
                 saveFile.objects[i - 1].scaleZ = ObjTop.transform.GetChild(i).gameObject.transform.localScale.z;
             }
-            //int currInt = PlayerPrefs.GetInt("currIndex", 0);
             string saveName = saveAsTxt.text;
             allSaves.Add(saveName, saveFile);
-            //saveIndex = currInt;
-            //currInt++;
-            //PlayerPrefs.SetInt("currIndex", currInt);
-            string save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
+            save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
             Debug.Log("Save suceed");
             Debug.Log(save);
             isSaved = true;
-        } else if (buttonName.Equals("TestLoadBtn"))
+        } else if (buttonName.Equals("LoadCnfrm"))
         {
             string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
             allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
-            GameData load = allSaves["test"];
+
+            
+            int test = loadKey.value;
+            string testString = loadKey.options[test].text;
+            Debug.Log(testString);
+
+            GameData load = allSaves[testString];
             int roomSize = load.getRoomSize();
             int objSize = load.getObjSize();
             
@@ -91,22 +96,6 @@ public class DataHandler : MonoBehaviour
                 wall.transform.localScale = scale;
                 wall.transform.parent = wallParent;
                 wall.name = load.room[i].name;
-
-               /*if (load.room[i].name.Equals("Floor")) {
-
-                } 
-                else if (load.room[i].name.Equals("Floor"))
-                {
-
-                } 
-                else if (load.room[i].name.Equals("Floor"))
-                {
-
-                } 
-                else if (load.room[i].name.Equals("Floor"))
-                {
-
-                }*/
 
                 if (load.room[i].name.Equals("Floor"))
                 {
@@ -129,7 +118,7 @@ public class DataHandler : MonoBehaviour
             }
 
             isSaved = true;
-           // uiEH.RoomCreated = true;
+           // uiEH.RoomCreated = true;*/
         }
     }
 }

@@ -5,11 +5,16 @@ using TMPro;
 using UnityEngine.EventSystems;
 using Button = UnityEngine.UI.Button;
 using Image = UnityEngine.UI.Image;
+using UnityEngine.UI;
+using Newtonsoft.Json;
+using System;
+using System.Linq;
 
 public class SaveLoadUI : MonoBehaviour
 {
     public Button save, load, saveas;
     public Image saveasScreen, loadScreen;
+    public TMP_Dropdown dropdown;
     private bool isMainPressed = false;
     private bool isSaveAsPressed = false;
     private bool isSavePressed = false;
@@ -50,6 +55,18 @@ public class SaveLoadUI : MonoBehaviour
         {
             saveasScreen.gameObject.SetActive(false);
             loadScreen.gameObject.SetActive(true);
+
+            string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
+            Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+            List<string> saveNames = new List<string>();
+
+            for (int x = 0; x < allSaves.Count; x++)
+            {
+                saveNames.Add(allSaves.Keys.ElementAt(x));
+                Debug.Log(allSaves.Keys.ElementAt(x));
+            }
+
+            dropdown.AddOptions(saveNames);
             isLoadPressed = true;
             isSidePressed = true;
         }
