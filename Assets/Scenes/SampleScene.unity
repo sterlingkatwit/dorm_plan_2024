@@ -1511,8 +1511,8 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 157183522}
-        m_TargetAssemblyTypeName: SaveLoadUI, Assembly-CSharp
+      - m_Target: {fileID: 1457788384}
+        m_TargetAssemblyTypeName: DataHandler, Assembly-CSharp
         m_MethodName: OnButtonPress
         m_Mode: 1
         m_Arguments:
@@ -4914,7 +4914,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &360108353
 RectTransform:
   m_ObjectHideFlags: 0
@@ -12860,7 +12860,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1012005906
 RectTransform:
   m_ObjectHideFlags: 0
@@ -23055,6 +23055,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1117575427}
     m_Modifications:
+    - target: {fileID: 1352200090216618854, guid: ea1e848747868dc4abbfe4351a270815, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1457788384}
+    - target: {fileID: 1352200090216618854, guid: ea1e848747868dc4abbfe4351a270815, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnButtonPress
+      objectReference: {fileID: 0}
     - target: {fileID: 4058717640623127484, guid: ea1e848747868dc4abbfe4351a270815, type: 3}
       propertyPath: m_Name
       value: LoadCreate
@@ -29560,6 +29568,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1117575427}
     m_Modifications:
+    - target: {fileID: 980480100908532068, guid: a39a21bb0c53e4d4ab06a642122ffd2e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1457788384}
+    - target: {fileID: 980480100908532068, guid: a39a21bb0c53e4d4ab06a642122ffd2e, type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnButtonPress
+      objectReference: {fileID: 0}
     - target: {fileID: 4995527671104489929, guid: a39a21bb0c53e4d4ab06a642122ffd2e, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5

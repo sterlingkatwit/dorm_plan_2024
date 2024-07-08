@@ -68,6 +68,11 @@ public class DataHandler : MonoBehaviour
                 
                 RoomTop.transform.GetChild(i).gameObject.transform.position = pos;
                 RoomTop.transform.GetChild(i).gameObject.transform.localScale = scale;
+
+                for (int j = 0; j < RoomTop.transform.GetChild(i).childCount; j++)
+                {
+                    Destroy(RoomTop.transform.GetChild(i).GetChild(j).gameObject);
+                }
             }
 
             for (int i = 1; i < ObjTop.transform.childCount; i++)
