@@ -97,8 +97,13 @@ public class DataHandler : MonoBehaviour
 
     private string getSaveData (GameObject RoomTop, GameObject ObjTop, string saveName)
     {
-        string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
-        allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+        string save;
+        if (System.IO.File.Exists(Application.persistentDataPath + "/SaveLoad.json"))
+        {
+            save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
+            allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+        }
+
         for (int i = 0; i < RoomTop.transform.childCount; i++)
         {
             saveFile.room[i].name = RoomTop.transform.GetChild(i).gameObject.name;
@@ -130,7 +135,7 @@ public class DataHandler : MonoBehaviour
         {
             allSaves[saveName] = saveFile;
         }
-        
+
         save = JsonConvert.SerializeObject(allSaves, Formatting.Indented);
         return save;
     }
