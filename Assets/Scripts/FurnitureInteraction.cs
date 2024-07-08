@@ -67,6 +67,7 @@ public class FurnitureInteraction : MonoBehaviour
         }
         else{
             uiEHScript.selectedObjDisplay.text = "";
+            uiEHScript.selectedObjTagDisplay.text = "";
         }
 
         if (Input.GetKeyDown(KeyCode.Delete) && isRightClicked)
