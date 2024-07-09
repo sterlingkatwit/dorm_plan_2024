@@ -21,6 +21,10 @@ public class CameraEventHandler : MonoBehaviour
     private float dragSpeed = 12;
     private Vector3 dragOrigin;
 
+    private float zoomSpeed = 2f;
+    private float minZoom = 5f;
+    private float maxZoom = 50f;
+
 
     // Start is called before the first frame update
     void Start()
@@ -36,10 +40,28 @@ public class CameraEventHandler : MonoBehaviour
             orthoAdjust();
             roomSizeFlag = false;
         }
+        MoveCamera();
+        CamZoom();
+    }
 
-        //If free-cam is enabled, can mouse down to move camera while in 2D mode.
+    private void CamZoom()
+    {
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+
+        if (mainCam.orthographic)
+        {
+            mainCam.orthographicSize -= scroll * zoomSpeed;
+            mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
+        }
+        // else
+        // {
+        //     mainCam.fieldOfView -= scroll * zoomSpeed;
+        //     mainCam.fieldOfView = Mathf.Clamp(mainCam.fieldOfView, minZoom, maxZoom);
+        // }
+    }
+
+    private void MoveCamera(){
         if(freeEnabled && mainCam.orthographic){
-
             if (Input.GetMouseButtonDown(0))
             {
                 dragOrigin = Input.mousePosition;
