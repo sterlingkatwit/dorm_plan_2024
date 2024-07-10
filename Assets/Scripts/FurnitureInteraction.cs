@@ -9,7 +9,6 @@ using Button = UnityEngine.UI.Button;
 
 public class FurnitureInteraction : MonoBehaviour
 {
-    // Should be seperated into two scripts? -Lucas
 
     private GameObject genIntEV, uiEH, camEH, objEditEH, tempObj;
     private GeneralInteractionEventHandler genIntScript;

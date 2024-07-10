@@ -246,7 +246,7 @@ public class UIEventHandler : MonoBehaviour
     }
 
     // Method to update the text element with the total floor space
-    private void UpdateFloorSpaceText(){
+    public void UpdateFloorSpaceText(){
         float totalFloorSpace = CalculateTotalFloorSpace();
         float roomTotalSpace = roomWidth * roomLength;
         freeSpaceText.text = totalFloorSpace.ToString("F2") + " / " + roomTotalSpace.ToString("F2") + " ft²";

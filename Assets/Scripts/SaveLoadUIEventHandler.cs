@@ -50,6 +50,7 @@ public class SaveLoadUI : MonoBehaviour
         }
         else if (buttonName.Equals("LoadBtn") && !isLoadPressed)
         {
+            dropdown.ClearOptions();
             isSaveAsPressed = false;
             saveasScreen.gameObject.SetActive(false);
             loadScreen.gameObject.SetActive(true);
@@ -67,6 +68,16 @@ public class SaveLoadUI : MonoBehaviour
             isLoadPressed = true;
         }
         else if (buttonName.Equals("LoadBtn") && isLoadPressed)
+        {
+            loadScreen.gameObject.SetActive(false);
+            isLoadPressed = false;
+        }
+        else if (buttonName.Equals("SaveAsCfrm"))
+        {
+            saveasScreen.gameObject.SetActive(false);
+            isSaveAsPressed = false;
+        }
+        else if (buttonName.Equals("LoadCnfrm"))
         {
             loadScreen.gameObject.SetActive(false);
             isLoadPressed = false;

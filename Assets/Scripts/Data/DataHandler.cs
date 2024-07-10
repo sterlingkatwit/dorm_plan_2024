@@ -28,6 +28,8 @@ public class DataHandler : MonoBehaviour
     public string currSave;
     public int saveIndex;
 
+    public UIEventHandler uiEHScript;
+
     public Dictionary<string, GameData> allSaves = new Dictionary<string, GameData>();
 
     public void OnButtonPress()
@@ -92,6 +94,7 @@ public class DataHandler : MonoBehaviour
             }
             currSave = saveName;
             isSaved = true;
+            uiEHScript.UpdateFloorSpaceText();
         }
     }
 
