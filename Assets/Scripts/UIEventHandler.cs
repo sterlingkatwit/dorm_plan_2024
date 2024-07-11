@@ -18,7 +18,7 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofX;
     public TMP_InputField ofY;
     public TMP_InputField ofZ;
-    public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText, freeSpaceText;
+    public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText, freeSpaceText, totalObjsText;
     public TMP_InputField newTagInput;
     public Image objCreateImg, roomCreateImg, toolBarImg, dropdownImg;
     public Canvas canvMain;
@@ -32,6 +32,8 @@ public class UIEventHandler : MonoBehaviour
     public Material outlineMaterial;
     [HideInInspector] public List<string> objectTypes = new List<string> { "", "Bed", "Chair", "Desk", "Drawer" };
     [HideInInspector] public List<GameObject> furnitureList = new List<GameObject>();
+    [HideInInspector] public Dictionary<GameObject, float> furnitureFloorSpaceDict; 
+    [HideInInspector] public float totalFloorSpace = 0f;
 
 
     [HideInInspector] public GameObject selectedWall;
@@ -45,6 +47,14 @@ public class UIEventHandler : MonoBehaviour
         roomCreateImg.gameObject.SetActive(true);
         newTagInput.onEndEdit.AddListener(OnInputFieldEndEdit);
         TypeDropdownStart();
+        furnitureFloorSpaceDict = new Dictionary<GameObject, float>();
+        CalculateFloorSpaceForFurniture();
+        UpdateObjectCountText();
+        UpdateFloorSpaceText();
+    }
+
+    void Update(){
+        UpdateObjectCountText();
     }
 
     public void OnButtonPress()
@@ -206,49 +216,94 @@ public class UIEventHandler : MonoBehaviour
         typeDropdownEdit3D.AddOptions(objectTypes);
     }
 
-    public void AddFurniture(GameObject furniture){
-        furnitureList.Add(furniture);
+
+    // Method to add a new furniture object and update related information
+    public void AddFurniture(GameObject furniture)
+    {
+        AddFurnitureToList(furniture);
+        UpdateObjectCountText();
         UpdateFloorSpaceText();
     }
 
-    private float CalculateTotalFloorSpace(){
-        float totalFloorSpace = 0f;
-
-        foreach (GameObject furniture in furnitureList){
-            Vector3 furnitureSize = GetFurnitureSize(furniture);
-            totalFloorSpace += furnitureSize.x * furnitureSize.z;
-        }
-
-        return totalFloorSpace;
-    }
-
-    private Vector3 GetFurnitureSize(GameObject furniture){
-        MeshFilter meshFilter = furniture.GetComponent<MeshFilter>();
-        Collider collider = furniture.GetComponent<Collider>();
-
-        Vector3 size = Vector3.zero;
-
-        if (meshFilter != null){
-            Vector3 meshSize = meshFilter.mesh.bounds.size;
-            Vector3 objectScale = furniture.transform.localScale;
-            size = Vector3.Scale(meshSize, objectScale);
-        } else if (collider != null){
-            Vector3 colliderSize = collider.bounds.size;
-            Vector3 objectScale = furniture.transform.localScale;
-            size = new Vector3(
-                colliderSize.x / furniture.transform.lossyScale.x,
-                colliderSize.z / furniture.transform.lossyScale.z,
-                colliderSize.y / furniture.transform.lossyScale.y
-            );
-        }
-
-        return size;
-    }
-
     // Method to update the text element with the total floor space
+
     public void UpdateFloorSpaceText(){
         float totalFloorSpace = CalculateTotalFloorSpace();
         float roomTotalSpace = roomWidth * roomLength;
         freeSpaceText.text = totalFloorSpace.ToString("F2") + " / " + roomTotalSpace.ToString("F2") + " ft²";
+    }
+
+    public void UpdateObjectCountText()
+    {
+        // Count number of child objects minus one for Clipboard
+        int objectCount = objParent.childCount - 1;
+        totalObjsText.text = objectCount.ToString();
+    }
+
+    // Method to calculate and store the floor space for each furniture object
+    void CalculateFloorSpaceForFurniture()
+    {
+        furnitureFloorSpaceDict.Clear(); // Clear the dictionary to recalculate all values
+        foreach (GameObject furniture in furnitureList)
+        {
+            Renderer furnitureRenderer = furniture.GetComponent<Renderer>();
+            if (furnitureRenderer != null)
+            {
+                float floorSpace = furnitureRenderer.bounds.size.x * furnitureRenderer.bounds.size.z;
+                furnitureFloorSpaceDict[furniture] = floorSpace;
+            }
+        }
+    }
+
+    // Method to add a new furniture object to the list and calculate its floor space
+    public void AddFurnitureToList(GameObject newFurniture)
+    {
+        if (!furnitureList.Contains(newFurniture))
+        {
+            furnitureList.Add(newFurniture);
+            Renderer furnitureRenderer = newFurniture.GetComponent<Renderer>();
+            if (furnitureRenderer != null)
+            {
+                float floorSpace = furnitureRenderer.bounds.size.x * furnitureRenderer.bounds.size.z;
+                furnitureFloorSpaceDict[newFurniture] = floorSpace;
+            }
+        }
+    }
+
+    // Method to get the floor space of a specific furniture object
+    public float GetFurnitureFloorSpace(GameObject furniture)
+    {
+        if (furnitureFloorSpaceDict.ContainsKey(furniture))
+        {
+            return furnitureFloorSpaceDict[furniture];
+        }
+        return 0f;
+    }
+
+    // Method to calculate the total floor space occupied by all furniture objects
+    public float CalculateTotalFloorSpace()
+    {
+        float newFloorSpace = 0f;
+        foreach (var entry in furnitureFloorSpaceDict)
+        {
+            newFloorSpace += entry.Value;
+        }
+        totalFloorSpace = newFloorSpace;
+        return totalFloorSpace;
+    }
+
+    // Method to remove a furniture object from the list and update related information
+    public void RemoveFurniture(GameObject furnitureToRemove)
+    {
+        if (furnitureList.Contains(furnitureToRemove))
+        {
+            furnitureList.Remove(furnitureToRemove);
+            if (furnitureFloorSpaceDict.ContainsKey(furnitureToRemove))
+            {
+                furnitureFloorSpaceDict.Remove(furnitureToRemove);
+            }
+            UpdateFloorSpaceText();
+            UpdateObjectCountText();
+        }
     }
 }

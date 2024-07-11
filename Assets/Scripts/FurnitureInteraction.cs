@@ -68,14 +68,6 @@ public class FurnitureInteraction : MonoBehaviour
             uiEHScript.selectedObjDisplay.text = "";
             uiEHScript.selectedObjTagDisplay.text = "";
         }
-
-        if (Input.GetKeyDown(KeyCode.Delete) && isRightClicked)
-        {
-            Destroy(gameObject);
-        }
-
-
-
     }
 
  
@@ -145,9 +137,11 @@ public class FurnitureInteraction : MonoBehaviour
             }
             else if(Input.GetKeyDown(KeyCode.X)){
                 copyObj();
+                uiEHScript.RemoveFurniture(this.gameObject);
                 Destroy(this.gameObject);
             }
         } else if(Input.GetKey(KeyCode.Delete) || Input.GetKey(KeyCode.Backspace)){
+            uiEHScript.RemoveFurniture(this.gameObject);
             Destroy(this.gameObject);
         }
 
@@ -237,10 +231,8 @@ public class FurnitureInteraction : MonoBehaviour
         }
     }
 
-    public void EnableShaderMaterial()
-    {
-        if (objectRenderer != null && uiEHScript.outlineMaterial != null)
-        {
+    public void EnableShaderMaterial(){
+        if (objectRenderer != null && uiEHScript.outlineMaterial != null){
             // Create a new array with an additional slot for the shader material
             Material[] materials = new Material[2];
             materials[0] = defaultMaterial; 
@@ -250,10 +242,8 @@ public class FurnitureInteraction : MonoBehaviour
         }
     }
 
-    public void DisableShaderMaterial()
-    {
-        if (objectRenderer != null)
-        {
+    public void DisableShaderMaterial(){
+        if (objectRenderer != null){
             // Revert to the default material only
             Material[] materials = new Material[1];
             materials[0] = defaultMaterial;
