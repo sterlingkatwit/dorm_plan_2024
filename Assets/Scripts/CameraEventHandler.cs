@@ -24,11 +24,15 @@ public class CameraEventHandler : MonoBehaviour
     private float zoomSpeed = 2f;
     private float minZoom = 5f;
     private float maxZoom = 50f;
+    private GameObject previousWall = null;
+
 
 
     // Start is called before the first frame update
     void Start()
     {
+        // So wall will get reset after camera is rotated away.
+        previousWall = uiEH.wallBottom;
     }
 
     // Update is called once per frame
@@ -42,14 +46,13 @@ public class CameraEventHandler : MonoBehaviour
         }
         MoveCamera();
         CamZoom();
+        RotateCamera();
     }
 
-    private void CamZoom()
-    {
+    private void CamZoom(){
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if (mainCam.orthographic)
-        {
+        if (mainCam.orthographic){
             mainCam.orthographicSize -= scroll * zoomSpeed;
             mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
         }
@@ -58,6 +61,25 @@ public class CameraEventHandler : MonoBehaviour
         //     mainCam.fieldOfView -= scroll * zoomSpeed;
         //     mainCam.fieldOfView = Mathf.Clamp(mainCam.fieldOfView, minZoom, maxZoom);
         // }
+    }
+
+    private void RotateCamera(){
+        if(!mainCam.orthographic){
+            if (Input.GetMouseButtonDown(0)){
+                dragOrigin = Input.mousePosition;
+            }
+            if (Input.GetMouseButton(0)){
+                Vector3 difference = Input.mousePosition - dragOrigin;
+                //float rotationX = difference.y * dragSpeed * Time.deltaTime;
+                float rotationY = difference.x * dragSpeed * Time.deltaTime;
+
+                mainCam.transform.RotateAround(Vector3.zero, Vector3.up, rotationY);
+                //mainCam.transform.RotateAround(Vector3.zero, mainCam.transform.right, rotationX);
+
+                dragOrigin = Input.mousePosition;
+                DetectWallIntersection();
+            }
+        }
     }
 
     private void MoveCamera(){
@@ -162,30 +184,30 @@ public class CameraEventHandler : MonoBehaviour
             float wallsX = uiEH.wallBottom.gameObject.transform.localScale.x;
             float wallsZ = uiEH.wallLeft.gameObject.transform.localScale.z;
 
-            camDist = Math.Max(wallsX,wallsZ) + 2f;
+            camDist = Math.Max(wallsX,wallsZ) + 4f;
 
             if(camState.Equals(0)){
-                mainCam.transform.position = new Vector3(0, 3, -camDist);
-                mainCam.transform.rotation = Quaternion.Euler(10, 0, 0);
+                mainCam.transform.position = new Vector3(0, 5, -camDist);
+                mainCam.transform.rotation = Quaternion.Euler(12, 0, 0);
                 uiEH.wallBottom.SetActive(false);
                 roomState(camState);
             }
             else if(camState.Equals(1)){
-                mainCam.transform.position = new Vector3(-camDist, 3, 0);
-                mainCam.transform.rotation = Quaternion.Euler(10, 90, 0);
+                mainCam.transform.position = new Vector3(-camDist, 5, 0);
+                mainCam.transform.rotation = Quaternion.Euler(12, 90, 0);
 
                 uiEH.wallLeft.SetActive(false);
                 roomState(camState);
             }
             else if(camState.Equals(2)){
-                mainCam.transform.position = new Vector3(0, 3, camDist);
-                mainCam.transform.rotation = Quaternion.Euler(10, 180, 0);
+                mainCam.transform.position = new Vector3(0, 5, camDist);
+                mainCam.transform.rotation = Quaternion.Euler(12, 180, 0);
                 uiEH.wallTop.SetActive(false);
                 roomState(camState);
             }
             else if(camState.Equals(3)){
-                mainCam.transform.position = new Vector3(camDist, 3, 0);
-                mainCam.transform.rotation = Quaternion.Euler(10, 270, 0);
+                mainCam.transform.position = new Vector3(camDist, 5, 0);
+                mainCam.transform.rotation = Quaternion.Euler(12, 270, 0);
                 uiEH.wallRight.SetActive(false);
                 roomState(camState);
             }
@@ -206,6 +228,36 @@ public class CameraEventHandler : MonoBehaviour
             }
             if(!cur.Equals(3)){
                 uiEH.wallRight.SetActive(true);
+            }
+        }
+    }
+    private void DetectWallIntersection()
+    {
+        Vector3 direction = Vector3.zero - mainCam.transform.position;
+        float rayLength = direction.magnitude;
+        Ray ray = new Ray(mainCam.transform.position, direction);
+        RaycastHit hit;
+
+        if (Physics.Raycast(ray, out hit, rayLength))
+        {
+            if(hit.collider.CompareTag("WallX") || hit.collider.CompareTag("WallZ")){
+                GameObject hitWall = hit.collider.gameObject;
+
+                if (previousWall != null && previousWall != hitWall)
+                {
+                    previousWall.SetActive(true);
+                }
+
+                hitWall.SetActive(false);
+                previousWall = hitWall;
+            }
+        }
+        else
+        {
+            if (previousWall != null)
+            {
+                previousWall.SetActive(true);
+                previousWall = null;
             }
         }
     }
