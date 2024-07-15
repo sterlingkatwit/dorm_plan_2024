@@ -63,6 +63,8 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
         if (buttonName.Equals("ObjEditBtn")){
             editFunctionality();
+            uiEH.RemoveFurniture(objCurrentEdit);
+            uiEH.AddFurniture(objCurrentEdit);
         }
         else if(buttonName.Equals("ObjTagAddBtn2D")){
             if(objTagEditCreate2D.IsActive()){

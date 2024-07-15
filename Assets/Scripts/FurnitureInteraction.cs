@@ -52,17 +52,15 @@ public class FurnitureInteraction : MonoBehaviour
     void Update()
     {
         if(isLeftClicked){
-            //Move objects when left clicked. Check if cam switched recently.
-            if(camEHScript.camSwitched){
-                isLeftClicked = false;
-                camEHScript.camSwitched = false;
-            }
-            else{
-                moveObject();
-            }
+            moveObject();   
 
         } else if (isRightClicked){
             objectSelected();
+        }
+        else if(camEHScript.camSwitched){
+            isLeftClicked = false;
+            GetComponent<Renderer>().material.SetColor("_Color", prevColor);
+            camEHScript.camSwitched = false;
         }
         else{
             uiEHScript.selectedObjDisplay.text = "";

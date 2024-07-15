@@ -20,7 +20,7 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofZ;
     public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText, freeSpaceText, totalObjsText;
     public TMP_InputField newTagInput;
-    public Image objCreateImg, roomCreateImg, mainMenuImg,  toolBarImg, dropdownImg;
+    public Image objCreateImg, mainMenuImg,  toolBarImg, dropdownImg;
     public Canvas canvMain;
     public TMP_Dropdown typeDropdown, typeDropdownEdit2D, typeDropdownEdit3D;
     public GameObject wallPrefab;
@@ -45,7 +45,6 @@ public class UIEventHandler : MonoBehaviour
 
     void Start(){
         mainMenuImg.gameObject.SetActive(true);
-        roomCreateImg.gameObject.SetActive(true);
         newTagInput.onEndEdit.AddListener(OnInputFieldEndEdit);
         TypeDropdownStart();
         furnitureFloorSpaceDict = new Dictionary<GameObject, float>();
@@ -69,7 +68,6 @@ public class UIEventHandler : MonoBehaviour
                 if (wallBottom == null)
                 {
                     GenerateRoom();
-                    roomCreateImg.gameObject.SetActive(false);
                     mainMenuImg.gameObject.SetActive(false);
                     toolBarImg.gameObject.SetActive(true);
                 }
