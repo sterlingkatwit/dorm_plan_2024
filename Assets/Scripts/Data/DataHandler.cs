@@ -94,7 +94,6 @@ public class DataHandler : MonoBehaviour
             }
             currSave = saveName;
             isSaved = true;
-            uiEHScript.UpdateFloorSpaceText();
         }
     }
 

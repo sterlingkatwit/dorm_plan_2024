@@ -8,6 +8,7 @@ using Image = UnityEngine.UI.Image;
 using UnityEngine.UI;
 using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Linq;
 
 public class SaveLoadUI : MonoBehaviour
@@ -50,22 +51,26 @@ public class SaveLoadUI : MonoBehaviour
         }
         else if (buttonName.Equals("LoadBtn") && !isLoadPressed)
         {
-            dropdown.ClearOptions();
-            isSaveAsPressed = false;
-            saveasScreen.gameObject.SetActive(false);
-            loadScreen.gameObject.SetActive(true);
-
-            string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
-            Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
-            List<string> saveNames = new List<string>();
-
-            for (int x = 0; x < allSaves.Count; x++)
+            if (File.Exists(Application.persistentDataPath + "/SaveLoad.json"))
             {
-                saveNames.Add(allSaves.Keys.ElementAt(x));
-            }
+                dropdown.ClearOptions();
+                isSaveAsPressed = false;
+                saveasScreen.gameObject.SetActive(false);
+                loadScreen.gameObject.SetActive(true);
 
-            dropdown.AddOptions(saveNames);
-            isLoadPressed = true;
+            
+                string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
+                Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+                List<string> saveNames = new List<string>();
+
+                for (int x = 0; x < allSaves.Count; x++)
+                {
+                    saveNames.Add(allSaves.Keys.ElementAt(x));
+                }
+
+                dropdown.AddOptions(saveNames);
+                isLoadPressed = true;
+            }
         }
         else if (buttonName.Equals("LoadBtn") && isLoadPressed)
         {
