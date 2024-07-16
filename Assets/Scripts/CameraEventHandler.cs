@@ -250,6 +250,23 @@ public class CameraEventHandler : MonoBehaviour
 
                 hitWall.SetActive(false);
                 previousWall = hitWall;
+
+                if(hitWall.name.Equals("BottomWall")){
+                    camState = 0;
+                    roomState(camState);
+                }
+                else if(hitWall.name.Equals("LeftWall")){
+                    camState = 1;
+                    roomState(camState);
+                }  
+                else if(hitWall.name.Equals("TopWall")){
+                    camState = 2;
+                    roomState(camState);
+                }                
+                else if(hitWall.name.Equals("RightWall")){
+                    camState = 3;
+                    roomState(camState);
+                }
             }
         }
         else
