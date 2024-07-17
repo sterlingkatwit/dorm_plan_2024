@@ -369,40 +369,89 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
 
 
-    public Vector3 interact3D(float increment, int dir, GameObject furniture){
+    public Vector3 interact3D(float increment, int dir, GameObject furniture)
+    {
         Vector3 currentPos = furniture.transform.position;
         float curX = furniture.transform.position.x;
         float curY = furniture.transform.position.y;
         float curZ = furniture.transform.position.z;
 
-        if(!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl)){
-            switch(dir){
+        if (!Input.GetKey(KeyCode.LeftShift) && !Input.GetKey(KeyCode.LeftControl))
+        {
+            // Determine the camera orientation based on the disabled wall
+            Vector3 rightDirection = Vector3.right;
+            Vector3 leftDirection = Vector3.left;
+            Vector3 forwardDirection = Vector3.forward;
+            Vector3 backDirection = Vector3.back;
+
+            if (!uiEH.wallBottom.activeSelf)
+            {
+                // Bottom wall disabled (looking from top)
+                rightDirection = Vector3.right;
+                leftDirection = Vector3.left;
+                forwardDirection = Vector3.forward;
+                backDirection = Vector3.back;
+            }
+            else if (!uiEH.wallTop.activeSelf)
+            {
+                // Top wall disabled (looking from bottom)
+                rightDirection = Vector3.left;
+                leftDirection = Vector3.right;
+                forwardDirection = Vector3.back;
+                backDirection = Vector3.forward;
+            }
+            else if (!uiEH.wallLeft.activeSelf)
+            {
+                // Left wall disabled (looking from right)
+                rightDirection = Vector3.back;
+                leftDirection = Vector3.forward;
+                forwardDirection = Vector3.right;
+                backDirection = Vector3.left;
+            }
+            else if (!uiEH.wallRight.activeSelf)
+            {
+                // Right wall disabled (looking from left)
+                rightDirection = Vector3.forward;
+                leftDirection = Vector3.back;
+                forwardDirection = Vector3.left;
+                backDirection = Vector3.right;
+            }
+
+            switch (dir)
+            {
                 case 0:
-                    if(Input.GetKeyDown(KeyCode.RightArrow) && objMoveCheck(furniture, Vector3.right, increment, true)){
-                        currentPos = furniture.transform.position = new Vector3(curX+increment, curY, curZ);
+                    if (Input.GetKeyDown(KeyCode.RightArrow) && objMoveCheck(furniture, rightDirection, increment, true))
+                    {
+                        currentPos = furniture.transform.position = new Vector3(curX + increment * rightDirection.x, curY, curZ + increment * rightDirection.z);
                     }
-                    else if(Input.GetKeyDown(KeyCode.LeftArrow) && objMoveCheck(furniture, Vector3.left, increment, true)){
-                        currentPos = furniture.transform.position = new Vector3(curX-increment, curY, curZ);
+                    else if (Input.GetKeyDown(KeyCode.LeftArrow) && objMoveCheck(furniture, leftDirection, increment, true))
+                    {
+                        currentPos = furniture.transform.position = new Vector3(curX + increment * leftDirection.x, curY, curZ + increment * leftDirection.z);
                     }
-                    else if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.forward, increment, true)){
-                        currentPos = furniture.transform.position = new Vector3(curX, curY, curZ+increment);
+                    else if (Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, forwardDirection, increment, true))
+                    {
+                        currentPos = furniture.transform.position = new Vector3(curX + increment * forwardDirection.x, curY, curZ + increment * forwardDirection.z);
                     }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.back, increment, false)){
-                        currentPos = furniture.transform.position = new Vector3(curX, curY, curZ-increment);
+                    else if (Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, backDirection, increment, false))
+                    {
+                        currentPos = furniture.transform.position = new Vector3(curX + increment * backDirection.x, curY, curZ + increment * backDirection.z);
                     }
-                break;
+                    break;
                 case 1:
-                    if(Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.up, increment, true)){
-                        currentPos = furniture.transform.position = new Vector3(curX, curY+increment, curZ);
+                    if (Input.GetKeyDown(KeyCode.UpArrow) && objMoveCheck(furniture, Vector3.up, increment, true))
+                    {
+                        currentPos = furniture.transform.position = new Vector3(curX, curY + increment, curZ);
                     }
-                    else if(Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.down, increment, true)){
-                        currentPos = furniture.transform.position = new Vector3(curX, curY-increment, curZ);
+                    else if (Input.GetKeyDown(KeyCode.DownArrow) && objMoveCheck(furniture, Vector3.down, increment, true))
+                    {
+                        currentPos = furniture.transform.position = new Vector3(curX, curY - increment, curZ);
                     }
-                break;
+                    break;
             }
         }
         return currentPos;
     }
+
 
     void changeIncrement(){
         if(Input.GetKey(KeyCode.LeftShift)){
