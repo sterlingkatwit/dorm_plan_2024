@@ -18,7 +18,7 @@ public class DataHandler : MonoBehaviour
     GameData saveFile = new GameData();
 
     public TMP_InputField saveAsTxt;
-    public TMP_Dropdown loadKey;
+    public TMP_Dropdown loadKey, mainLoadKey;
 
     public GameObject wallPrefab;
     public Transform wallParent;
@@ -53,11 +53,19 @@ public class DataHandler : MonoBehaviour
         } 
         else if (buttonName.Equals("LoadCnfrm"))
         {
+            string saveName = null;
             string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
             allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
 
-            int dropVal = loadKey.value;
-            string saveName = loadKey.options[dropVal].text;
+            if(uiEHScript.mainMenuImg.IsActive()){
+                uiEHScript.GenerateRoomForLoad();
+                uiEHScript.toolBarImg.gameObject.SetActive(true);
+                int dropVal = mainLoadKey.value;
+                saveName = mainLoadKey.options[dropVal].text;
+            } else {
+                int dropVal = loadKey.value;
+                saveName = loadKey.options[dropVal].text;
+            }
 
             GameData load = allSaves[saveName];
             int roomSize = load.getRoomSize();

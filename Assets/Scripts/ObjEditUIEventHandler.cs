@@ -276,9 +276,9 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
         if (isWindow)
         {
-            if (Input.GetKeyDown(KeyCode.UpArrow) && !furniture.CompareTag("Door")){
+            if (Input.GetKeyDown(KeyCode.UpArrow)){
                 currentPos = furniture.transform.position = new Vector3(curX, curY + increment, curZ);
-            } else if (Input.GetKeyDown(KeyCode.DownArrow) && !furniture.CompareTag("Door")){
+            } else if (Input.GetKeyDown(KeyCode.DownArrow)){
                 currentPos = furniture.transform.position = new Vector3(curX, curY - increment, curZ);
             }
             else if (isWallX){
