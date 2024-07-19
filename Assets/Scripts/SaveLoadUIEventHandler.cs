@@ -10,15 +10,37 @@ using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Linq;
+using Unity.VisualScripting;
 
 public class SaveLoadUI : MonoBehaviour
 {
-    public Button save, load, saveas;
+    public Button save, load, saveas, mainLoad;
     public Image saveasScreen, loadScreen;
-    public TMP_Dropdown dropdown;
+    public TMP_Dropdown dropdown, mainDropdown;
+
+    public UIEventHandler uiEH;
+
     private bool isMainPressed = false;
     private bool isSaveAsPressed = false;
     private bool isLoadPressed = false;
+
+    void Start(){
+        if (File.Exists(Application.persistentDataPath + "/SaveLoad.json"))
+        {
+            mainDropdown.ClearOptions();
+        
+            string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
+            Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+            List<string> saveNames = new List<string>();
+
+                for (int x = 0; x < allSaves.Count; x++)
+                {
+                    saveNames.Add(allSaves.Keys.ElementAt(x));
+                }
+
+            mainDropdown.AddOptions(saveNames);
+        }
+    }
 
     public void OnButtonPress()
     {
@@ -84,8 +106,12 @@ public class SaveLoadUI : MonoBehaviour
         }
         else if (buttonName.Equals("LoadCnfrm"))
         {
-            loadScreen.gameObject.SetActive(false);
-            isLoadPressed = false;
-        }
+            if(uiEH.mainMenuImg.IsActive()){
+                uiEH.mainMenuImg.gameObject.SetActive(false);
+            } else {
+                loadScreen.gameObject.SetActive(false);
+                isLoadPressed = false;
+            }
+        } 
     }
 }

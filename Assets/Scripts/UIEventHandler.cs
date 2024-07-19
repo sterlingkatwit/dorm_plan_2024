@@ -164,6 +164,25 @@ public class UIEventHandler : MonoBehaviour
         }
     }
 
+    public void GenerateRoomForLoad(){
+    
+        wallBottom = BuildWall(new Vector3(1, 1, 1), new Vector3(1, 1, 1), "BottomWall");
+        wallTop = BuildWall(new Vector3(1, 1, 1), new Vector3(1, 1, 1), "TopWall");
+        wallLeft = BuildWall(new Vector3(1, 1, 1), new Vector3(1, 1, 1), "LeftWall");
+        wallRight = BuildWall(new Vector3(1, 1, 1), new Vector3(1, 1, 1), "RightWall");
+        floor = BuildWall(new Vector3(1, 1, 1), new Vector3(1, 1, 1), "Floor");
+
+        Renderer floorRenderer = floor.GetComponent<Renderer>();
+        Material floorMaterial = new Material(Shader.Find("Standard"));
+        floorMaterial.color = Color.gray;
+        floorRenderer.material = floorMaterial;
+        floor.tag = "Floor";
+        wallBottom.tag = wallTop.tag = "WallZ";
+        wallLeft.tag = wallRight.tag = "WallX";
+
+        RoomCreated = true;
+    }
+
     public float castFloat(String inp){
         float x = 0f;
         float.TryParse(inp, out x);
