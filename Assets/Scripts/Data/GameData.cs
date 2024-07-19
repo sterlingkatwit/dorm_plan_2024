@@ -19,9 +19,9 @@ public class GameData
         public float scaleZ;
     }
 
-    //public int saveNum;
-    public ObjStruct[] room;
+    public ObjStruct[] room; 
     public ObjStruct[] objects;
+    public Dictionary<string, ObjStruct> allSaves = new Dictionary<string, ObjStruct>();
 
     public int getRoomSize()
     {
