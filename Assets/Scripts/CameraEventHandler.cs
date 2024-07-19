@@ -52,15 +52,10 @@ public class CameraEventHandler : MonoBehaviour
     private void CamZoom(){
         float scroll = Input.GetAxis("Mouse ScrollWheel");
 
-        if (mainCam.orthographic){
+        if (mainCam.orthographic && freeEnabled){
             mainCam.orthographicSize -= scroll * zoomSpeed;
             mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
         }
-        // else
-        // {
-        //     mainCam.fieldOfView -= scroll * zoomSpeed;
-        //     mainCam.fieldOfView = Mathf.Clamp(mainCam.fieldOfView, minZoom, maxZoom);
-        // }
     }
 
     private void RotateCamera(){
