@@ -24,6 +24,8 @@ public class DataHandler : MonoBehaviour
     public Transform wallParent;
     public GameObject objPrefab;
     public Transform objParent;
+    public GameObject winPrefab;
+    public GameObject doorPrefab;
     public bool isSaved = false;
     public string currSave;
     public int saveIndex;
@@ -38,6 +40,7 @@ public class DataHandler : MonoBehaviour
         GameObject ObjTop = GameObject.Find("Objects");
         saveFile.setRoomSize(5);
         saveFile.setObjSize(ObjTop.transform.childCount - 1);
+
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
         if (buttonName.Equals("SaveBtn") && isSaved)
         {
@@ -83,6 +86,28 @@ public class DataHandler : MonoBehaviour
                 {
                     Destroy(RoomTop.transform.GetChild(i).GetChild(j).gameObject);
                 }
+                
+                for (int k = 0; k < load.room[i].getWinDoorSizeSize(); k++)
+                {
+                    Vector3 posWD = new Vector3(load.room[i].winDoorArray[k].posX, load.room[i].winDoorArray[k].posY, load.room[i].winDoorArray[k].posZ);
+                    Vector3 scaleWD = new Vector3(load.room[i].winDoorArray[k].scaleX, load.room[i].winDoorArray[k].scaleY, load.room[i].winDoorArray[k].scaleZ);
+
+                    GameObject winDoorPrefab = null;
+
+                    if (load.room[i].winDoorArray[k].name.Equals("Window(Clone)"))
+                    {
+                        winDoorPrefab = winPrefab;
+                    } 
+                    else if (load.room[i].winDoorArray[k].name.Equals("Door(Clone)"))
+                    {
+                        winDoorPrefab = doorPrefab;
+                    }
+
+                    GameObject obj = Instantiate(winDoorPrefab, posWD, Quaternion.identity);
+                    obj.transform.localScale = scaleWD;
+                    obj.transform.parent = RoomTop.transform.GetChild(i).gameObject.transform;
+                    obj.name = load.room[i].winDoorArray[k].name;
+                }
             }
 
             for (int i = 1; i < ObjTop.transform.childCount; i++)
@@ -96,8 +121,8 @@ public class DataHandler : MonoBehaviour
                 Vector3 scale = new Vector3(load.objects[i].scaleX, load.objects[i].scaleY, load.objects[i].scaleZ);
 
                 GameObject obj = Instantiate(objPrefab, pos, Quaternion.identity);
-                obj.transform.localScale = scale;
                 obj.transform.parent = objParent;
+                obj.transform.localScale = scale;
                 obj.name = load.objects[i].name;
             }
             currSave = saveName;
@@ -128,27 +153,22 @@ public class DataHandler : MonoBehaviour
             saveFile.room[i].scaleY = wall.transform.localScale.y;
             saveFile.room[i].scaleZ = wall.transform.localScale.z;
 
-            //saveFile.room[i].winDoor[0].name = "test";
+            saveFile.room[i].setWinDoorSize(wall.transform.childCount);
 
-            /*for (int x = 0; x < wall.transform.childCount; x++)
-            {
-                GameObject objs = wall.transform.GetChild(x).gameObject;
-                saveFile.room[i].winDoor[x].name = "test";
-            }
             for (int x = 0; x < wall.transform.childCount; x++)
             {
-                    GameObject objs = wall.transform.GetChild(x).gameObject;
+                GameObject objs = wall.transform.GetChild(x).gameObject;
 
-                    saveFile.room[i].winDoor[x].name = objs.name;
+                saveFile.room[i].winDoorArray[x].name = objs.name;
 
-                    saveFile.room[i].winDoor[x].posX = objs.transform.position.x;
-                    saveFile.room[i].winDoor[x].posY = objs.transform.position.y;
-                    saveFile.room[i].winDoor[x].posZ = objs.transform.position.z;
+                saveFile.room[i].winDoorArray[x].posX = objs.transform.position.x;
+                saveFile.room[i].winDoorArray[x].posY = objs.transform.position.y;
+                saveFile.room[i].winDoorArray[x].posZ = objs.transform.position.z;
 
-                    saveFile.room[i].winDoor[x].scaleX = objs.transform.localScale.x;
-                    saveFile.room[i].winDoor[x].scaleY = objs.transform.localScale.y;
-                    saveFile.room[i].winDoor[x].scaleZ = objs.transform.localScale.z;
-                }*/
+                saveFile.room[i].winDoorArray[x].scaleX = objs.transform.localScale.x;
+                saveFile.room[i].winDoorArray[x].scaleY = objs.transform.localScale.y;
+                saveFile.room[i].winDoorArray[x].scaleZ = objs.transform.localScale.z;
+            }
         }
         for (int i = 1; i < ObjTop.transform.childCount; i++)
         {
