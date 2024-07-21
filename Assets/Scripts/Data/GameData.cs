@@ -3,25 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class GameData
 {
-    [Serializable]
-    public struct ObjStruct
-    {
-        public string name;
-
-        public float posX;
-        public float posY;
-        public float posZ;
-
-        public float scaleX;
-        public float scaleY;
-        public float scaleZ;
-    }
-
-    //public int saveNum;
-    public ObjStruct[] room;
-    public ObjStruct[] objects;
+    public RoomData[] room; 
+    public ObjData[] objects;
 
     public int getRoomSize()
     {
@@ -35,11 +21,23 @@ public class GameData
 
     public void setRoomSize(int size)
     {
-        room = new ObjStruct[size];
+        room = arrayOf<RoomData>(size);
     }
 
     public void setObjSize(int size)
     {
-        objects = new ObjStruct[size];
+        objects = arrayOf<ObjData>(size);
+    }
+
+    // array intializer from https://stackoverflow.com/questions/49114218
+    public T[] arrayOf<T>(int count) where T : new()
+    {
+        T[] arr = new T[count];
+        for (int i = 0; i < count; i++)
+        {
+            arr[i] = new T();
+        }
+
+        return arr;
     }
 }

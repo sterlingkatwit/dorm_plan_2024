@@ -80,7 +80,6 @@ public class SaveLoadUI : MonoBehaviour
                 saveasScreen.gameObject.SetActive(false);
                 loadScreen.gameObject.SetActive(true);
 
-            
                 string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
                 Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
                 List<string> saveNames = new List<string>();
