@@ -268,7 +268,7 @@ public class ObjEditUIEventHandler : MonoBehaviour
         float curZ = furniture.transform.position.z;
 
         // Get the parent wall to determine orientation
-        Transform parentWall = furniture.transform.parent;
+        GameObject parentWall = furniture.GetComponent<SelectableObject>().parentWall; //furniture.transform.parent;
         bool isWallX = parentWall.CompareTag("WallX");
         bool isWallZ = parentWall.CompareTag("WallZ");
         bool isWallRight = parentWall.name == "RightWall";

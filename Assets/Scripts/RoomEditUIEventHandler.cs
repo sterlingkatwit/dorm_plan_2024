@@ -215,7 +215,8 @@ public class RoomEditUIEventHandler : MonoBehaviour
 
         GameObject window = Instantiate(windowPrefab, windowPosition, windowRotation);
         window.transform.localScale = new Vector3(windowWidth, windowHeight, 0.1f);
-        window.transform.SetParent(uiEH.selectedWall.transform, true);
+        window.GetComponent<SelectableObject>().parentWall = uiEH.selectedWall;
+        window.transform.SetParent(uiEH.wallParent, true);
 
         Renderer windowRenderer = window.GetComponent<Renderer>();
         if (windowRenderer != null)

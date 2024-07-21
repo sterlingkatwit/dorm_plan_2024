@@ -9,6 +9,7 @@ public class SelectableObject : MonoBehaviour
     public GeneralInteractionEventHandler genIntScript;
     public RoomEditUIEventHandler roomEditScript;
     private Color originalColor;
+    public GameObject parentWall;
     private bool isSelected = false;
     private Renderer objectRenderer;
     private float Increment;
