@@ -13,6 +13,7 @@ public class SelectableObject : MonoBehaviour
     private bool isSelected = false;
     private Renderer objectRenderer;
     private float Increment;
+    private Vector3 originalScale;
 
     void Start()
     {
@@ -24,7 +25,7 @@ public class SelectableObject : MonoBehaviour
         roomEditScript = roomEdit.GetComponent<RoomEditUIEventHandler>();
         objectRenderer = GetComponent<Renderer>();
         originalColor = Color.grey;
-        
+        originalScale = this.transform.localScale;
     }
 
     void Update(){
@@ -33,6 +34,13 @@ public class SelectableObject : MonoBehaviour
             Increment = objEditScript.Increment;
             objEditScript.interact2D(Increment, this.gameObject, true);
         }
+        
+        if(!parentWall.gameObject.activeSelf){
+            this.transform.localScale = Vector3.zero;
+        } else {
+            this.transform.localScale = originalScale;
+        }
+
         checkSelection();
         delWindow();
     }
