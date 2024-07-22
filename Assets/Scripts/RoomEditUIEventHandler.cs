@@ -18,6 +18,7 @@ public class RoomEditUIEventHandler : MonoBehaviour
     public GeneralInteractionEventHandler genIntEH;
     public ObjEditUIEventHandler objEditEH;
     public GameObject windowPrefab, doorPrefab;
+    public Transform wallObjects;
     [HideInInspector] public GameObject objectSelected, objCurrentEdit;
     private Camera uiCamera;
     private float initialZScale;
@@ -216,7 +217,7 @@ public class RoomEditUIEventHandler : MonoBehaviour
         GameObject window = Instantiate(windowPrefab, windowPosition, windowRotation);
         window.transform.localScale = new Vector3(windowWidth, windowHeight, 0.1f);
         window.GetComponent<SelectableObject>().parentWall = uiEH.selectedWall;
-        window.transform.SetParent(uiEH.wallParent, true);
+        window.transform.SetParent(wallObjects, true);
 
         Renderer windowRenderer = window.GetComponent<Renderer>();
         if (windowRenderer != null)
@@ -262,7 +263,8 @@ public class RoomEditUIEventHandler : MonoBehaviour
 
         GameObject door = Instantiate(doorPrefab, doorPosition, doorRotation);
         door.transform.localScale = new Vector3(doorWidth, doorHeight, 0.1f);
-        door.transform.SetParent(uiEH.selectedWall.transform, true);
+        door.GetComponent<SelectableObject>().parentWall = uiEH.selectedWall;
+        door.transform.SetParent(wallObjects, true);
 
         Renderer doorRenderer = door.GetComponent<Renderer>();
         if (doorRenderer != null)
