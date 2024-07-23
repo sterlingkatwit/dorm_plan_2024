@@ -26,6 +26,7 @@ public class DataHandler : MonoBehaviour
     public Transform objParent;
     public GameObject winPrefab;
     public GameObject doorPrefab;
+    public Transform winDoorParent;
     public bool isSaved = false;
     public string currSave;
     public int saveIndex;
@@ -38,18 +39,21 @@ public class DataHandler : MonoBehaviour
     {
         GameObject RoomTop = GameObject.Find("Room Walls");
         GameObject ObjTop = GameObject.Find("Objects");
+        GameObject WinDoorTop = GameObject.Find("WallObjects");
+
         saveFile.setRoomSize(5);
         saveFile.setObjSize(ObjTop.transform.childCount - 1);
+        saveFile.setWinDoorSize(WinDoorTop.transform.childCount);
 
         string buttonName = EventSystem.current.currentSelectedGameObject.name;
         if (buttonName.Equals("SaveBtn") && isSaved)
         {
-            string save = getSaveData(RoomTop, ObjTop, currSave);
+            string save = getSaveData(RoomTop, ObjTop, WinDoorTop, currSave);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
         }
         else if (buttonName.Equals("SaveAsCfrm"))
         {
-            string save = getSaveData(RoomTop, ObjTop, saveAsTxt.text);
+            string save = getSaveData(RoomTop, ObjTop, WinDoorTop, saveAsTxt.text);
             System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
             isSaved = true;
             currSave = saveAsTxt.text;
@@ -81,13 +85,8 @@ public class DataHandler : MonoBehaviour
                 
                 RoomTop.transform.GetChild(i).gameObject.transform.position = pos;
                 RoomTop.transform.GetChild(i).gameObject.transform.localScale = scale;
-
-                for (int j = 0; j < RoomTop.transform.GetChild(i).childCount; j++)
-                {
-                    Destroy(RoomTop.transform.GetChild(i).GetChild(j).gameObject);
-                }
                 
-                for (int k = 0; k < load.room[i].getWinDoorSizeSize(); k++)
+               /* for (int k = 0; k < load.room[i].getWinDoorSizeSize(); k++)
                 {
                     Vector3 posWD = new Vector3(load.room[i].winDoorArray[k].posX, load.room[i].winDoorArray[k].posY, load.room[i].winDoorArray[k].posZ);
                     Vector3 scaleWD = new Vector3(load.room[i].winDoorArray[k].scaleX, load.room[i].winDoorArray[k].scaleY, load.room[i].winDoorArray[k].scaleZ);
@@ -107,7 +106,12 @@ public class DataHandler : MonoBehaviour
                     obj.transform.localScale = scaleWD;
                     obj.transform.parent = RoomTop.transform.GetChild(i).gameObject.transform;
                     obj.name = load.room[i].winDoorArray[k].name;
-                }
+                }*/
+            }
+
+            for (int i = 0; i < WinDoorTop.transform.childCount; i++)
+            {
+
             }
 
             for (int i = 1; i < ObjTop.transform.childCount; i++)
@@ -130,7 +134,7 @@ public class DataHandler : MonoBehaviour
         }
     }
 
-    private string getSaveData (GameObject RoomTop, GameObject ObjTop, string saveName)
+    private string getSaveData (GameObject RoomTop, GameObject ObjTop, GameObject WinDoorTop, string saveName)
     {
         string save;
         if (System.IO.File.Exists(Application.persistentDataPath + "/SaveLoad.json"))
@@ -139,36 +143,32 @@ public class DataHandler : MonoBehaviour
             allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
         }
 
-        for (int i = 0; i < RoomTop.transform.childCount; i++)
+        for (int i = 1; i < RoomTop.transform.childCount; i++)
         {
             GameObject wall = RoomTop.transform.GetChild(i).gameObject;
+            saveFile.room[i-1].name = wall.name;
 
-            saveFile.room[i].name = wall.name;
+            saveFile.room[i-1].posX = wall.transform.position.x;
+            saveFile.room[i-1].posY = wall.transform.position.y;
+            saveFile.room[i - 1].posZ = wall.transform.position.z;
 
-            saveFile.room[i].posX = wall.transform.position.x;
-            saveFile.room[i].posY = wall.transform.position.y;
-            saveFile.room[i].posZ = wall.transform.position.z;
+            saveFile.room[i - 1].scaleX = wall.transform.localScale.x;
+            saveFile.room[i - 1].scaleY = wall.transform.localScale.y;
+            saveFile.room[i - 1].scaleZ = wall.transform.localScale.z;
+        }
+        for (int i = 1; i < WinDoorTop.transform.childCount; i++)
+        {
+            GameObject objs = WinDoorTop.transform.GetChild(i).gameObject;
 
-            saveFile.room[i].scaleX = wall.transform.localScale.x;
-            saveFile.room[i].scaleY = wall.transform.localScale.y;
-            saveFile.room[i].scaleZ = wall.transform.localScale.z;
+            saveFile.winDoors[i].name = objs.name;
 
-            saveFile.room[i].setWinDoorSize(wall.transform.childCount);
+            saveFile.winDoors[i].posX = objs.transform.position.x;
+            saveFile.winDoors[i].posY = objs.transform.position.y;
+            saveFile.winDoors[i].posZ = objs.transform.position.z;
 
-            for (int x = 0; x < wall.transform.childCount; x++)
-            {
-                GameObject objs = wall.transform.GetChild(x).gameObject;
-
-                saveFile.room[i].winDoorArray[x].name = objs.name;
-
-                saveFile.room[i].winDoorArray[x].posX = objs.transform.position.x;
-                saveFile.room[i].winDoorArray[x].posY = objs.transform.position.y;
-                saveFile.room[i].winDoorArray[x].posZ = objs.transform.position.z;
-
-                saveFile.room[i].winDoorArray[x].scaleX = objs.transform.localScale.x;
-                saveFile.room[i].winDoorArray[x].scaleY = objs.transform.localScale.y;
-                saveFile.room[i].winDoorArray[x].scaleZ = objs.transform.localScale.z;
-            }
+            saveFile.winDoors[i].scaleX = objs.transform.localScale.x;
+            saveFile.winDoors[i].scaleY = objs.transform.localScale.y;
+            saveFile.winDoors[i].scaleZ = objs.transform.localScale.z;
         }
         for (int i = 1; i < ObjTop.transform.childCount; i++)
         {

@@ -6,8 +6,9 @@ using UnityEngine;
 [Serializable]
 public class GameData
 {
-    public RoomData[] room; 
+    public ObjData[] room; 
     public ObjData[] objects;
+    public ObjData[] winDoors;
 
     public int getRoomSize()
     {
@@ -21,12 +22,17 @@ public class GameData
 
     public void setRoomSize(int size)
     {
-        room = arrayOf<RoomData>(size);
+        room = arrayOf<ObjData>(size);
     }
 
     public void setObjSize(int size)
     {
         objects = arrayOf<ObjData>(size);
+    }
+
+    public void setWinDoorSize(int size)
+    {
+        winDoors = arrayOf<ObjData>(size);
     }
 
     // array intializer from https://stackoverflow.com/questions/49114218
