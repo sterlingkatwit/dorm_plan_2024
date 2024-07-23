@@ -20,7 +20,7 @@ public class UIEventHandler : MonoBehaviour
     public TMP_InputField ofZ;
     public TMP_Text selectedObjDisplay, selectedObjTagDisplay, addTagText, freeSpaceText, totalObjsText;
     public TMP_InputField newTagInput;
-    public Image objCreateImg, mainMenuImg,  toolBarImg, dropdownImg;
+    public Image objCreateImg, mainMenuImg,  toolBarImg, dropdownImg, menuConfirmImg;
     public Canvas canvMain;
     public TMP_Dropdown typeDropdown, typeDropdownEdit2D, typeDropdownEdit3D;
     public GameObject wallPrefab;
@@ -104,6 +104,22 @@ public class UIEventHandler : MonoBehaviour
                 dropdownImg.gameObject.SetActive(false);
             }
         }
+        else if (buttonName.Equals("MainMenuButton")){
+            if(menuConfirmImg.IsActive()){
+                menuConfirmImg.gameObject.SetActive(false);
+            } else {
+                menuConfirmImg.gameObject.SetActive(true);
+            }
+        }
+        else if (buttonName.Equals("MenuConfirmBtn")){
+            DestroyRoom();
+            menuConfirmImg.gameObject.SetActive(false);
+            toolBarImg.gameObject.SetActive(false);
+            mainMenuImg.gameObject.SetActive(true);
+        }
+        else if (buttonName.Equals("MenuCancelBtn")){
+            menuConfirmImg.gameObject.SetActive(false);
+        }
     }
 
     void GenerateObj()
@@ -181,6 +197,23 @@ public class UIEventHandler : MonoBehaviour
         wallLeft.tag = wallRight.tag = "WallX";
 
         RoomCreated = true;
+    }
+
+    public void DestroyRoom(){
+        if (RoomCreated){
+            Destroy(wallBottom.gameObject);
+            Destroy(wallTop.gameObject);
+            Destroy(wallLeft.gameObject);
+            Destroy(wallRight.gameObject);
+            Destroy(floor.gameObject);
+
+            if(wallParent.childCount > 0){
+                foreach(Transform child in wallParent){
+                    Destroy(child.gameObject);
+                }
+            }
+            RoomCreated = false;
+        }
     }
 
     public float castFloat(String inp){
