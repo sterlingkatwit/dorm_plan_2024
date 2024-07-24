@@ -77,41 +77,58 @@ public class DataHandler : MonoBehaviour
             GameData load = allSaves[saveName];
             int roomSize = load.getRoomSize();
             int objSize = load.getObjSize();
+            int winDoorSize = load.getWinDoorSize();
 
-            for (int i = 0; i < RoomTop.transform.childCount; i++)
+            for (int i = 1; i < RoomTop.transform.childCount; i++)
             {
-                Vector3 pos = new Vector3(load.room[i].posX, load.room[i].posY, load.room[i].posZ);
-                Vector3 scale = new Vector3(load.room[i].scaleX, load.room[i].scaleY, load.room[i].scaleZ);
+                Vector3 pos = new Vector3(load.room[i-1].posX, load.room[i-1].posY, load.room[i - 1].posZ);
+                Vector3 scale = new Vector3(load.room[i - 1].scaleX, load.room[i - 1].scaleY, load.room[i - 1].scaleZ);
                 
                 RoomTop.transform.GetChild(i).gameObject.transform.position = pos;
                 RoomTop.transform.GetChild(i).gameObject.transform.localScale = scale;
-                
-               /* for (int k = 0; k < load.room[i].getWinDoorSizeSize(); k++)
-                {
-                    Vector3 posWD = new Vector3(load.room[i].winDoorArray[k].posX, load.room[i].winDoorArray[k].posY, load.room[i].winDoorArray[k].posZ);
-                    Vector3 scaleWD = new Vector3(load.room[i].winDoorArray[k].scaleX, load.room[i].winDoorArray[k].scaleY, load.room[i].winDoorArray[k].scaleZ);
-
-                    GameObject winDoorPrefab = null;
-
-                    if (load.room[i].winDoorArray[k].name.Equals("Window(Clone)"))
-                    {
-                        winDoorPrefab = winPrefab;
-                    } 
-                    else if (load.room[i].winDoorArray[k].name.Equals("Door(Clone)"))
-                    {
-                        winDoorPrefab = doorPrefab;
-                    }
-
-                    GameObject obj = Instantiate(winDoorPrefab, posWD, Quaternion.identity);
-                    obj.transform.localScale = scaleWD;
-                    obj.transform.parent = RoomTop.transform.GetChild(i).gameObject.transform;
-                    obj.name = load.room[i].winDoorArray[k].name;
-                }*/
             }
 
             for (int i = 0; i < WinDoorTop.transform.childCount; i++)
             {
+                Destroy(WinDoorTop.transform.GetChild(i).gameObject);
+            }
 
+            for (int i = 0; i < winDoorSize; i++)
+            {
+                Vector3 posWD = new Vector3(load.winDoors[i].posX, load.winDoors[i].posY, load.winDoors[i].posZ);
+                Vector3 scaleWD = new Vector3(load.winDoors[i].scaleX, load.winDoors[i].scaleY, load.winDoors[i].scaleZ);
+
+                GameObject winDoorPrefab = null;
+
+                if (load.winDoors[i].name.Equals("Window(Clone)"))
+                {
+                    winDoorPrefab = winPrefab;
+                }
+                else if (load.winDoors[i].name.Equals("Door(Clone)"))
+                {
+                    winDoorPrefab = doorPrefab;
+                }
+
+                GameObject obj = Instantiate(winDoorPrefab, posWD, Quaternion.identity);
+                obj.transform.localScale = scaleWD;
+                obj.transform.parent = winDoorParent;
+                obj.name = load.winDoors[i].name;
+
+                string wall = load.winDoors[i].ParentWall;
+
+                if (wall.Equals("BottomWall"))
+                {
+                    obj.GetComponent<SelectableObject>().parentWall = RoomTop.transform.GetChild(1).gameObject;
+                } else if (wall.Equals("TopWall"))
+                {
+                    obj.GetComponent<SelectableObject>().parentWall = RoomTop.transform.GetChild(2).gameObject;
+                } else if (wall.Equals("LeftWall"))
+                {
+                    obj.GetComponent<SelectableObject>().parentWall = RoomTop.transform.GetChild(3).gameObject;
+                } else if (wall.Equals("RightWall"))
+                {
+                    obj.GetComponent<SelectableObject>().parentWall = RoomTop.transform.GetChild(4).gameObject;
+                }
             }
 
             for (int i = 1; i < ObjTop.transform.childCount; i++)
@@ -156,11 +173,12 @@ public class DataHandler : MonoBehaviour
             saveFile.room[i - 1].scaleY = wall.transform.localScale.y;
             saveFile.room[i - 1].scaleZ = wall.transform.localScale.z;
         }
-        for (int i = 1; i < WinDoorTop.transform.childCount; i++)
+        for (int i = 0; i < WinDoorTop.transform.childCount; i++)
         {
             GameObject objs = WinDoorTop.transform.GetChild(i).gameObject;
 
             saveFile.winDoors[i].name = objs.name;
+            saveFile.winDoors[i].ParentWall = objs.GetComponent<SelectableObject>().parentWall.name;
 
             saveFile.winDoors[i].posX = objs.transform.position.x;
             saveFile.winDoors[i].posY = objs.transform.position.y;
@@ -169,6 +187,7 @@ public class DataHandler : MonoBehaviour
             saveFile.winDoors[i].scaleX = objs.transform.localScale.x;
             saveFile.winDoors[i].scaleY = objs.transform.localScale.y;
             saveFile.winDoors[i].scaleZ = objs.transform.localScale.z;
+
         }
         for (int i = 1; i < ObjTop.transform.childCount; i++)
         {

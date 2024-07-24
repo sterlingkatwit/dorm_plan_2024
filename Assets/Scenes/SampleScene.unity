@@ -21302,6 +21302,7 @@ MonoBehaviour:
   objParent: {fileID: 1341746082}
   winPrefab: {fileID: 7773109410033309884, guid: cf8cec0e27966d24497af46e4ec6da03, type: 3}
   doorPrefab: {fileID: 7773109410033309884, guid: f058f723510acb0419c6bbbb26965031, type: 3}
+  winDoorParent: {fileID: 1018765500}
   isSaved: 0
   currSave: 
   saveIndex: 0

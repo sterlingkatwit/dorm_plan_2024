@@ -8,7 +8,7 @@ public class GameData
 {
     public ObjData[] room; 
     public ObjData[] objects;
-    public ObjData[] winDoors;
+    public WinDoorData[] winDoors;
 
     public int getRoomSize()
     {
@@ -18,6 +18,11 @@ public class GameData
     public int getObjSize()
     {
         return objects.Length;
+    }
+
+    public int getWinDoorSize()
+    { 
+        return winDoors.Length; 
     }
 
     public void setRoomSize(int size)
@@ -32,7 +37,7 @@ public class GameData
 
     public void setWinDoorSize(int size)
     {
-        winDoors = arrayOf<ObjData>(size);
+        winDoors = arrayOf<WinDoorData>(size);
     }
 
     // array intializer from https://stackoverflow.com/questions/49114218
