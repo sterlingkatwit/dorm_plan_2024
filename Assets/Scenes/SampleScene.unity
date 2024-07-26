@@ -10550,6 +10550,7 @@ MonoBehaviour:
   roomEditEH: {fileID: 1387172169}
   uiEH: {fileID: 1494306714}
   camEH: {fileID: 1004388696}
+  dataEH: {fileID: 1457788384}
   objParent: {fileID: 1341746082}
   clipboard: {fileID: 1548090167}
 --- !u!1 &755663131
@@ -13768,6 +13769,7 @@ MonoBehaviour:
   camCCW: {fileID: 789685848}
   camFree: {fileID: 359540913}
   camOrtho: {fileID: 1141154968}
+  roomSizeFlag: 1
 --- !u!1 &1008674902
 GameObject:
   m_ObjectHideFlags: 0
@@ -21304,6 +21306,7 @@ MonoBehaviour:
   doorPrefab: {fileID: 7773109410033309884, guid: f058f723510acb0419c6bbbb26965031, type: 3}
   winDoorParent: {fileID: 1018765500}
   isSaved: 0
+  isCamera: 1
   currSave: 
   saveIndex: 0
   uiEHScript: {fileID: 1494306714}

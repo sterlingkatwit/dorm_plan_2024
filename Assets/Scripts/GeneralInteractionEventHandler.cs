@@ -14,13 +14,14 @@ public class GeneralInteractionEventHandler : MonoBehaviour
     public RoomEditUIEventHandler roomEditEH;
     public UIEventHandler uiEH;
     public CameraEventHandler camEH;
+    public DataHandler dataEH;
     public Transform objParent, clipboard;
-    
+
 
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -28,21 +29,27 @@ public class GeneralInteractionEventHandler : MonoBehaviour
     {
         openObjectCreate();
         pasteObject();
+        updateCamera();
     }
 
-    
 
-    void openObjectCreate(){
+
+    void openObjectCreate()
+    {
 
         // Opens the object creation window. Extra logic in here to make it appear on mouse cursor
         // and make sure it doesn't go off-screen at all.
 
-        if (Input.GetMouseButtonDown(1)){
+        if (Input.GetMouseButtonDown(1))
+        {
             if (!EventSystem.current.IsPointerOverGameObject() && !IsPointerOverGameObject("Object") && !IsPointerOverGameObject("Wall") &&
-             !IsPointerOverGameObject("WallZ") && !IsPointerOverGameObject("WallX") && !IsPointerOverGameObject("Window") && !IsPointerOverGameObject("Door")){
-                if (uiEH.objCreateImg.gameObject != null){
+             !IsPointerOverGameObject("WallZ") && !IsPointerOverGameObject("WallX") && !IsPointerOverGameObject("Window") && !IsPointerOverGameObject("Door"))
+            {
+                if (uiEH.objCreateImg.gameObject != null)
+                {
 
-                    if(objEditEH.objEditWindow2D.IsActive() || objEditEH.objEditWindow3D.IsActive() || roomEditEH.wallObjEditWin.IsActive() || roomEditEH.wallEditWin.IsActive()){
+                    if (objEditEH.objEditWindow2D.IsActive() || objEditEH.objEditWindow3D.IsActive() || roomEditEH.wallObjEditWin.IsActive() || roomEditEH.wallEditWin.IsActive())
+                    {
                         objEditEH.objEditWindow2D.gameObject.SetActive(false);
                         objEditEH.objEditWindow3D.gameObject.SetActive(false);
                         roomEditEH.wallObjEditWin.gameObject.SetActive(false);
@@ -65,53 +72,73 @@ public class GeneralInteractionEventHandler : MonoBehaviour
                     float canvasHeight = uiEH.canvMain.GetComponent<RectTransform>().rect.height;
 
 
-                    if (adjustedPosition.x - halfWidth < -canvasWidth / 2){
+                    if (adjustedPosition.x - halfWidth < -canvasWidth / 2)
+                    {
                         adjustedPosition.x = -canvasWidth / 2 + halfWidth;
                     }
-                    else if (adjustedPosition.x + halfWidth > canvasWidth / 2){
+                    else if (adjustedPosition.x + halfWidth > canvasWidth / 2)
+                    {
                         adjustedPosition.x = canvasWidth / 2 - halfWidth;
                     }
 
 
-                    if (adjustedPosition.y - halfHeight < -canvasHeight / 2){
+                    if (adjustedPosition.y - halfHeight < -canvasHeight / 2)
+                    {
                         adjustedPosition.y = -canvasHeight / 2 + halfHeight;
                     }
-                    else if (adjustedPosition.y + halfHeight > canvasHeight / 2){
+                    else if (adjustedPosition.y + halfHeight > canvasHeight / 2)
+                    {
                         adjustedPosition.y = canvasHeight / 2 - halfHeight;
                     }
 
 
                     rectTransform.localPosition = adjustedPosition;
-                    }
-                else{
+                }
+                else
+                {
                     Debug.LogWarning("UI Window reference is not set.");
                 }
             }
         }
-        if(Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject()){
+        if (Input.GetMouseButtonDown(0) && !EventSystem.current.IsPointerOverGameObject())
+        {
             uiEH.objCreateImg.gameObject.SetActive(false);
         }
     }
 
-    public bool IsPointerOverGameObject(string tag){
+    public bool IsPointerOverGameObject(string tag)
+    {
 
         // Helper function
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-        if (Physics.Raycast(ray, out RaycastHit hit)){
+        if (Physics.Raycast(ray, out RaycastHit hit))
+        {
             return hit.collider.CompareTag(tag);
         }
         return false;
     }
 
 
-    void pasteObject(){
-        if(Input.GetKeyDown(KeyCode.V) && clipboard.childCount != 0){
+    void pasteObject()
+    {
+        if (Input.GetKeyDown(KeyCode.V) && clipboard.childCount != 0)
+        {
             GameObject pasting = clipboard.GetChild(0).gameObject;
             Transform state = pasting.gameObject.GetComponent<Transform>();
             obj = Instantiate(pasting, new Vector3(state.position.x, state.position.y, state.position.z), Quaternion.identity);
             obj.transform.parent = objParent;
             obj.SetActive(true);
+        }
+    }
+
+    void updateCamera()
+    {
+        // Checks if room is recently loaded to update camera
+        if (dataEH.isCamera == false)
+        {
+            camEH.roomSizeFlag = true;
+            dataEH.isCamera = true;
         }
     }
 }

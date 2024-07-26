@@ -28,6 +28,7 @@ public class DataHandler : MonoBehaviour
     public GameObject doorPrefab;
     public Transform winDoorParent;
     public bool isSaved = false;
+    public bool isCamera = true;
     public string currSave;
     public int saveIndex;
 
@@ -151,6 +152,7 @@ public class DataHandler : MonoBehaviour
             }
             currSave = saveName;
             isSaved = true;
+            isCamera = false;
         }
     }
 

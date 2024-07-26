@@ -15,7 +15,7 @@ public class CameraEventHandler : MonoBehaviour
     private int camState = 0;
     private float camDist = 10f;
 
-    private bool roomSizeFlag = true;
+    public bool roomSizeFlag = true;
 
     private bool freeEnabled = false;
     private float dragSpeed = 12;
