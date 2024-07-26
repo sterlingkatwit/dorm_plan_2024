@@ -53,10 +53,13 @@ public class DataHandler : MonoBehaviour
         }
         else if (buttonName.Equals("SaveAsCfrm"))
         {
-            string save = getSaveData(RoomTop, ObjTop, WinDoorTop, saveAsTxt.text);
-            System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
-            isSaved = true;
-            currSave = saveAsTxt.text;
+            if (!saveAsTxt.text.Equals(""))
+            {
+                string save = getSaveData(RoomTop, ObjTop, WinDoorTop, saveAsTxt.text);
+                System.IO.File.WriteAllText(Application.persistentDataPath + "/SaveLoad.json", save);
+                isSaved = true;
+                currSave = saveAsTxt.text;
+            }
         } 
         else if (buttonName.Equals("LoadCnfrm"))
         {
