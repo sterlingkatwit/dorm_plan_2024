@@ -23,7 +23,6 @@ public class FurnitureInteraction : MonoBehaviour
     public string type;
     private bool isLeftClicked = false;
     private bool isRightClicked = false;
-    private bool isRotatable = false;
     private Rigidbody rb;
     private int contacts;
     [HideInInspector] public Vector3 currentPos;
@@ -98,14 +97,6 @@ public class FurnitureInteraction : MonoBehaviour
         {
             GetComponent<Renderer>().material.SetColor("_Color", prevColor);
         }
-        // if (swtch)
-        // {
-        //     EnableShaderMaterial();
-        // }
-        // else
-        // {
-        //     DisableShaderMaterial();
-        // }
 
         return swtch;
     }
@@ -115,15 +106,9 @@ public class FurnitureInteraction : MonoBehaviour
         uiEHScript.selectedObjDisplay.text = this.name;
         uiEHScript.selectedObjTagDisplay.text = this.type;
         
-        // Object can be moved with mouse while holding shift.
         if(Input.GetKey(KeyCode.LeftShift) && Camera.main.orthographic){
-            // Get the current mouse position in screen coordinates
             Vector3 mPosScreen = Input.mousePosition;
-
-            // Convert the screen mouse position to world point
             Vector3 mPosWorld = Camera.main.ScreenToWorldPoint(new Vector3(mPosScreen.x, mPosScreen.y, transform.position.y - Camera.main.transform.position.y));
-
-            // Update the position of the object to the mouse position on only X and Z axes.
             currentPos = transform.position = new Vector3(mPosWorld.x, transform.position.y, mPosWorld.z);
         }
 
@@ -204,7 +189,7 @@ public class FurnitureInteraction : MonoBehaviour
             this.GetComponent<Renderer>().material.SetColor("_Color", prevColor);
             // DisableShaderMaterial();
         }
-
+        
     }
 
 

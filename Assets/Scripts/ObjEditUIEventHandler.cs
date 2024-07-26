@@ -267,15 +267,16 @@ public class ObjEditUIEventHandler : MonoBehaviour
         float curY = furniture.transform.position.y;
         float curZ = furniture.transform.position.z;
 
-        // Get the parent wall to determine orientation
-        GameObject parentWall = furniture.GetComponent<SelectableObject>().parentWall; //furniture.transform.parent;
-        bool isWallX = parentWall.CompareTag("WallX");
-        bool isWallZ = parentWall.CompareTag("WallZ");
-        bool isWallRight = parentWall.name == "RightWall";
-        bool isWallBottom = parentWall.name == "BottomWall";
-
         if (isWindow)
         {
+            // Get the parent wall to determine orientation
+            GameObject parentWall = furniture.GetComponent<SelectableObject>().parentWall; //furniture.transform.parent;
+            bool isWallX = parentWall.CompareTag("WallX");
+            bool isWallZ = parentWall.CompareTag("WallZ");
+            bool isWallRight = parentWall.name == "RightWall";
+            bool isWallBottom = parentWall.name == "BottomWall";
+
+
             if (Input.GetKeyDown(KeyCode.UpArrow)){
                 currentPos = furniture.transform.position = new Vector3(curX, curY + increment, curZ);
             } else if (Input.GetKeyDown(KeyCode.DownArrow)){
