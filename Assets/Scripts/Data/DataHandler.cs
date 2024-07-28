@@ -140,6 +140,8 @@ public class DataHandler : MonoBehaviour
                 Destroy(ObjTop.transform.GetChild(i).gameObject);
             }
 
+            uiEHScript.ResetFurniture();
+
             for (int i = 0; i < objSize; i++)
             {
                 Vector3 pos = new Vector3(load.objects[i].posX, load.objects[i].posY, load.objects[i].posZ);
@@ -149,7 +151,9 @@ public class DataHandler : MonoBehaviour
                 obj.transform.parent = objParent;
                 obj.transform.localScale = scale;
                 obj.name = load.objects[i].name;
+                uiEHScript.AddFurniture(obj);
             }
+
             currSave = saveName;
             isSaved = true;
             isCamera = false;

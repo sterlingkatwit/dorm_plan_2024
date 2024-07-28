@@ -395,4 +395,10 @@ public class UIEventHandler : MonoBehaviour
             UpdateObjectCountText();
         }
     }
+
+    public void ResetFurniture()
+    {
+        furnitureList.Clear();
+        furnitureFloorSpaceDict.Clear();
+    }
 }
