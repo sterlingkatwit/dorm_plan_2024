@@ -247,6 +247,13 @@ public class UIEventHandler : MonoBehaviour
                     Destroy(child.gameObject);
                 }
             }
+
+            for (int i = 1; i < objParent.transform.childCount; i++)
+            {
+                Destroy(objParent.transform.GetChild(i).gameObject);
+            }
+
+            ResetFurniture();
             RoomCreated = false;
         }
     }
@@ -400,5 +407,7 @@ public class UIEventHandler : MonoBehaviour
     {
         furnitureList.Clear();
         furnitureFloorSpaceDict.Clear();
+        UpdateFloorSpaceText();
+        UpdateObjectCountText();
     }
 }
