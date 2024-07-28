@@ -24,10 +24,16 @@ public class UIEventHandler : MonoBehaviour
     public Canvas canvMain;
     public TMP_Dropdown typeDropdown, typeDropdownEdit2D, typeDropdownEdit3D;
     public GameObject wallPrefab;
-    public GameObject objPrefab;
     public Transform wallParent;
     public Transform objParent;
     public bool RoomCreated = false;
+
+    // Prefabs of furniture
+    public GameObject objPrefab;
+    public GameObject bedPrefab;
+    public GameObject chairPrefab;
+    public GameObject deskPrefab;
+    public GameObject drawerPrefab;
 
     public Material outlineMaterial;
     [HideInInspector] public List<string> objectTypes = new List<string> { "", "Bed", "Chair", "Desk", "Drawer" };
@@ -131,10 +137,39 @@ public class UIEventHandler : MonoBehaviour
             float z = castFloat(ofZ.text);
 
             obj = Instantiate(objPrefab, new Vector3(0, y/2, 0), Quaternion.identity);
+
+            /*
+            // change prefab based on tag
+            GameObject newItemPrefab;
+            string type = typeDropdown.options[typeDropdown.value].text;
+
+            if (type.Equals("Bed"))
+            {
+                newItemPrefab = bedPrefab;
+            } 
+            else if (type.Equals("Chair"))
+            {
+                newItemPrefab = chairPrefab;
+            } 
+            else if (type.Equals("Desk"))
+            {
+                newItemPrefab = deskPrefab;
+            } 
+            else if (type.Equals("Drawer"))
+            {
+                newItemPrefab = drawerPrefab;
+            }
+            else
+            {
+                newItemPrefab = objPrefab;
+            }
+
+            obj = Instantiate(newItemPrefab, new Vector3(0, y / 2, 0), Quaternion.identity);*/
             obj.transform.SetParent(objParent);
             obj.transform.localScale = new Vector3(x, y, z);
             obj.name = ofName.text;
             obj.GetComponent<FurnitureInteraction>().currentPos = new Vector3(0, y/2, 0);
+            //obj.GetComponent<FurnitureInteraction>().type = type;
             obj.GetComponent<FurnitureInteraction>().type = typeDropdown.options[typeDropdown.value].text;
 
             AddFurniture(obj);

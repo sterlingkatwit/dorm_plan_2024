@@ -956,8 +956,8 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 24
-  m_fontSizeBase: 24
+  m_fontSize: 36
+  m_fontSizeBase: 36
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
@@ -1175,8 +1175,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -753, y: -1}
-  m_SizeDelta: {x: 91.965, y: 42.784}
+  m_AnchoredPosition: {x: -758, y: 0}
+  m_SizeDelta: {x: 135.3357, y: 67.991}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &108687436
 MonoBehaviour:
@@ -9667,7 +9667,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -959.62, y: -34}
+  m_AnchoredPosition: {x: -960.4, y: -34}
   m_SizeDelta: {x: 1920.8, y: 68}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &712206742
@@ -21901,10 +21901,14 @@ MonoBehaviour:
   typeDropdownEdit2D: {fileID: 1538404153}
   typeDropdownEdit3D: {fileID: 1762207913}
   wallPrefab: {fileID: 7773109410033309884, guid: 29fe27d8fca97e048a87ce99134535c5, type: 3}
-  objPrefab: {fileID: 7773109410033309884, guid: 03a414ed6a3e1444aa43508bbf8a6f9b, type: 3}
   wallParent: {fileID: 1462920086}
   objParent: {fileID: 1341746082}
   RoomCreated: 0
+  objPrefab: {fileID: 7773109410033309884, guid: 03a414ed6a3e1444aa43508bbf8a6f9b, type: 3}
+  bedPrefab: {fileID: 3800496436466665405, guid: 82f624b1964c7ba4fb21eae95f185a9c, type: 3}
+  chairPrefab: {fileID: 4237530767371831047, guid: 5c9d91b48a4d07c4d95e39a69f36a08f, type: 3}
+  deskPrefab: {fileID: 6848563262574193425, guid: 70f2476d20751ab40955cefa08b6f978, type: 3}
+  drawerPrefab: {fileID: 6701537745073358240, guid: 2ba5ac2de7ff0764e8874d18fcb4484c, type: 3}
   outlineMaterial: {fileID: 2100000, guid: 9bdb11fa8e082e34d82ea028d0b9c4da, type: 2}
   objectTypes:
   - 
