@@ -14,7 +14,7 @@ using Unity.VisualScripting;
 
 public class SaveLoadUI : MonoBehaviour
 {
-    public Button save, load, saveas, mainLoad;
+    public Button save, load, saveas, mainLoad, exit;
     public Image saveasScreen, loadScreen;
     public TMP_Dropdown dropdown, mainDropdown;
 
@@ -50,6 +50,7 @@ public class SaveLoadUI : MonoBehaviour
             save.gameObject.SetActive(true);
             saveas.gameObject.SetActive(true);
             load.gameObject.SetActive(true);
+            exit.gameObject.SetActive(true);
             isMainPressed = true;
         }
         else if (buttonName.Equals("SaveLoadBtn") && isMainPressed)
@@ -57,6 +58,7 @@ public class SaveLoadUI : MonoBehaviour
             save.gameObject.SetActive(false);
             saveas.gameObject.SetActive(false);
             load.gameObject.SetActive(false);
+            exit.gameObject.SetActive(false);
             isMainPressed = false;
         }
         else if (buttonName.Equals("SaveAsBtn") && !isSaveAsPressed)

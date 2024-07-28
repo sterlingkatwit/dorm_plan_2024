@@ -126,6 +126,10 @@ public class UIEventHandler : MonoBehaviour
         else if (buttonName.Equals("MenuCancelBtn")){
             menuConfirmImg.gameObject.SetActive(false);
         }
+        else if (buttonName.Equals("ExitBtn"))
+        {
+            Application.Quit();
+        }
     }
 
     void GenerateObj()
