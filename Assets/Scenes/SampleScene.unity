@@ -2308,6 +2308,7 @@ MonoBehaviour:
   dropdown: {fileID: 1761352534}
   mainDropdown: {fileID: 1497146209}
   uiEH: {fileID: 1494306714}
+  isMainPressed: 0
 --- !u!1 &157902479
 GameObject:
   m_ObjectHideFlags: 0
@@ -22171,6 +22172,7 @@ MonoBehaviour:
   wallPrefab: {fileID: 7773109410033309884, guid: 29fe27d8fca97e048a87ce99134535c5, type: 3}
   wallParent: {fileID: 1462920086}
   objParent: {fileID: 1341746082}
+  windoorParent: {fileID: 1018765500}
   RoomCreated: 0
   objPrefab: {fileID: 7773109410033309884, guid: 03a414ed6a3e1444aa43508bbf8a6f9b, type: 3}
   bedPrefab: {fileID: 3800496436466665405, guid: 82f624b1964c7ba4fb21eae95f185a9c, type: 3}
@@ -22194,6 +22196,7 @@ MonoBehaviour:
   wallRight: {fileID: 0}
   floor: {fileID: 0}
   obj: {fileID: 0}
+  saveloadUIHand: {fileID: 157183522}
 --- !u!114 &1497146209 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 3746472753864960742, guid: ea1e848747868dc4abbfe4351a270815, type: 3}

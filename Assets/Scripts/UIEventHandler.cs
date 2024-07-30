@@ -26,6 +26,7 @@ public class UIEventHandler : MonoBehaviour
     public GameObject wallPrefab;
     public Transform wallParent;
     public Transform objParent;
+    public Transform windoorParent;
     public bool RoomCreated = false;
 
     // Prefabs of furniture
@@ -48,6 +49,8 @@ public class UIEventHandler : MonoBehaviour
 
     [HideInInspector] public GameObject wallBottom, wallTop, wallLeft, wallRight, floor, obj;
     private float roomWidth, roomLength;
+
+    public SaveLoadUI saveloadUIHand;
 
     void Start(){
         mainMenuImg.gameObject.SetActive(true);
@@ -115,6 +118,12 @@ public class UIEventHandler : MonoBehaviour
                 menuConfirmImg.gameObject.SetActive(false);
             } else {
                 menuConfirmImg.gameObject.SetActive(true);
+
+                saveloadUIHand.save.gameObject.SetActive(false);
+                saveloadUIHand.saveas.gameObject.SetActive(false);
+                saveloadUIHand.load.gameObject.SetActive(false);
+                saveloadUIHand.exit.gameObject.SetActive(false);
+                saveloadUIHand.isMainPressed = false;
             }
         }
         else if (buttonName.Equals("MenuConfirmBtn")){
@@ -248,13 +257,21 @@ public class UIEventHandler : MonoBehaviour
 
             if(wallParent.childCount > 0){
                 foreach(Transform child in wallParent){
-                    Destroy(child.gameObject);
+                    if (!child.name.Equals("WallObjects"))
+                    {
+                        Destroy(child.gameObject);
+                    }
                 }
             }
 
             for (int i = 1; i < objParent.transform.childCount; i++)
             {
                 Destroy(objParent.transform.GetChild(i).gameObject);
+            }
+
+            for (int i = 0; i < windoorParent.transform.childCount; i++)
+            {
+                Destroy(windoorParent.transform.GetChild(i).gameObject);
             }
 
             ResetFurniture();

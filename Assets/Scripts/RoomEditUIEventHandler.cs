@@ -22,8 +22,6 @@ public class RoomEditUIEventHandler : MonoBehaviour
     private Camera uiCamera;
     private float initialZScale;
 
-
-
     void Start(){
         uiCamera = uiEH.canvMain.worldCamera;
         initialZScale = 0.1f;

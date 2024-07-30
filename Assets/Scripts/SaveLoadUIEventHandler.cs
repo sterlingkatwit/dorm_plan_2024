@@ -20,7 +20,7 @@ public class SaveLoadUI : MonoBehaviour
 
     public UIEventHandler uiEH;
 
-    private bool isMainPressed = false;
+    public bool isMainPressed = false;
     private bool isSaveAsPressed = false;
     private bool isLoadPressed = false;
 

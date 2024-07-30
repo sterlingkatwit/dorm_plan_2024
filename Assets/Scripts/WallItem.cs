@@ -13,7 +13,7 @@ public class SelectableObject : MonoBehaviour
     private bool isSelected = false;
     private Renderer objectRenderer;
     private float Increment;
-    private Vector3 originalScale;
+    public Vector3 originalScale;
 
     void Start()
     {

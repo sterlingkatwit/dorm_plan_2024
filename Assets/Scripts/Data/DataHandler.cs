@@ -100,7 +100,7 @@ public class DataHandler : MonoBehaviour
             {
                 Vector3 posWD = new Vector3(load.winDoors[i].posX, load.winDoors[i].posY, load.winDoors[i].posZ);
                 Vector3 scaleWD = new Vector3(load.winDoors[i].scaleX, load.winDoors[i].scaleY, load.winDoors[i].scaleZ);
-
+                
                 GameObject winDoorPrefab = null;
 
                 if (load.winDoors[i].name.Equals("Window(Clone)"))
@@ -116,6 +116,12 @@ public class DataHandler : MonoBehaviour
                 obj.transform.localScale = scaleWD;
                 obj.transform.parent = winDoorParent;
                 obj.name = load.winDoors[i].name;
+
+                // Sets 90 degree y rotation if WinDoor is on right or left wall
+                if (load.winDoors[i].ParentWall.Equals("RightWall") || load.winDoors[i].ParentWall.Equals("LeftWall"))
+                {
+                    obj.transform.rotation = Quaternion.Euler(0, 90, 0);
+                }
 
                 string wall = load.winDoors[i].ParentWall;
 
@@ -188,13 +194,28 @@ public class DataHandler : MonoBehaviour
             saveFile.winDoors[i].name = objs.name;
             saveFile.winDoors[i].ParentWall = objs.GetComponent<SelectableObject>().parentWall.name;
 
+            
             saveFile.winDoors[i].posX = objs.transform.position.x;
             saveFile.winDoors[i].posY = objs.transform.position.y;
             saveFile.winDoors[i].posZ = objs.transform.position.z;
 
-            saveFile.winDoors[i].scaleX = objs.transform.localScale.x;
-            saveFile.winDoors[i].scaleY = objs.transform.localScale.y;
-            saveFile.winDoors[i].scaleZ = objs.transform.localScale.z;
+
+            // Checks if scale of current windoor is zero
+            if (objs.transform.localScale.Equals(Vector3.zero))
+            {
+                // gets original windoor scale from walltem
+                SelectableObject myScript = objs.GetComponent<SelectableObject>();
+                Vector3 originalScale = myScript.originalScale;
+
+                saveFile.winDoors[i].scaleX = originalScale.x;
+                saveFile.winDoors[i].scaleY = originalScale.y;
+                saveFile.winDoors[i].scaleZ = originalScale.z;
+            } else
+            {
+                saveFile.winDoors[i].scaleX = objs.transform.localScale.x;
+                saveFile.winDoors[i].scaleY = objs.transform.localScale.y;
+                saveFile.winDoors[i].scaleZ = objs.transform.localScale.z;
+            }
 
         }
         for (int i = 1; i < ObjTop.transform.childCount; i++)
