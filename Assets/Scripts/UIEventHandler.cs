@@ -124,6 +124,7 @@ public class UIEventHandler : MonoBehaviour
                 saveloadUIHand.load.gameObject.SetActive(false);
                 saveloadUIHand.exit.gameObject.SetActive(false);
                 saveloadUIHand.isMainPressed = false;
+                saveloadUIHand.UpdateDropdown();
             }
         }
         else if (buttonName.Equals("MenuConfirmBtn")){
@@ -151,6 +152,7 @@ public class UIEventHandler : MonoBehaviour
 
             obj = Instantiate(objPrefab, new Vector3(0, y/2, 0), Quaternion.identity);
 
+            // Unused code for models
             /*
             // change prefab based on tag
             GameObject newItemPrefab;
@@ -178,11 +180,11 @@ public class UIEventHandler : MonoBehaviour
             }
 
             obj = Instantiate(newItemPrefab, new Vector3(0, y / 2, 0), Quaternion.identity);*/
+
             obj.transform.SetParent(objParent);
             obj.transform.localScale = new Vector3(x, y, z);
             obj.name = ofName.text;
             obj.GetComponent<FurnitureInteraction>().currentPos = new Vector3(0, y/2, 0);
-            //obj.GetComponent<FurnitureInteraction>().type = type;
             obj.GetComponent<FurnitureInteraction>().type = typeDropdown.options[typeDropdown.value].text;
 
             AddFurniture(obj);

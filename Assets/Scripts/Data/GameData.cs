@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// Storage class used in JSON conversion
+
 [Serializable]
 public class GameData
 {

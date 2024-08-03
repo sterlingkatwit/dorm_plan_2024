@@ -27,19 +27,24 @@ public class SaveLoadUI : MonoBehaviour
     void Start(){
         if (File.Exists(Application.persistentDataPath + "/SaveLoad.json"))
         {
-            mainDropdown.ClearOptions();
-        
-            string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
-            Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
-            List<string> saveNames = new List<string>();
-
-                for (int x = 0; x < allSaves.Count; x++)
-                {
-                    saveNames.Add(allSaves.Keys.ElementAt(x));
-                }
-
-            mainDropdown.AddOptions(saveNames);
+            UpdateDropdown();
         }
+    }
+
+    public void UpdateDropdown()
+    {
+        mainDropdown.ClearOptions();
+
+        string save = System.IO.File.ReadAllText(Application.persistentDataPath + "/SaveLoad.json");
+        Dictionary<string, GameData> allSaves = JsonConvert.DeserializeObject<Dictionary<string, GameData>>(save);
+        List<string> saveNames = new List<string>();
+
+        for (int x = 0; x < allSaves.Count; x++)
+        {
+            saveNames.Add(allSaves.Keys.ElementAt(x));
+        }
+
+        mainDropdown.AddOptions(saveNames);
     }
 
     public void OnButtonPress()

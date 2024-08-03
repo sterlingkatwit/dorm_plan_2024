@@ -12,6 +12,7 @@ using System.Drawing;
 using UnityEditor;
 using TMPro;
 
+// Class for compiling application's data into JSON format and uncompiling data from JSON
 public class DataHandler : MonoBehaviour 
 {
     GameData saveFile = new GameData();
@@ -100,6 +101,7 @@ public class DataHandler : MonoBehaviour
             {
                 Vector3 posWD = new Vector3(load.winDoors[i].posX, load.winDoors[i].posY, load.winDoors[i].posZ);
                 Vector3 scaleWD = new Vector3(load.winDoors[i].scaleX, load.winDoors[i].scaleY, load.winDoors[i].scaleZ);
+                Vector3 eulerWD = new Vector3(load.winDoors[i].rotX, load.winDoors[i].rotY, load.winDoors[i].rotZ);
                 
                 GameObject winDoorPrefab = null;
 
@@ -114,14 +116,9 @@ public class DataHandler : MonoBehaviour
 
                 GameObject obj = Instantiate(winDoorPrefab, posWD, Quaternion.identity);
                 obj.transform.localScale = scaleWD;
+                obj.transform.eulerAngles = eulerWD;
                 obj.transform.parent = winDoorParent;
                 obj.name = load.winDoors[i].name;
-
-                // Sets 90 degree y rotation if WinDoor is on right or left wall
-                if (load.winDoors[i].ParentWall.Equals("RightWall") || load.winDoors[i].ParentWall.Equals("LeftWall"))
-                {
-                    obj.transform.rotation = Quaternion.Euler(0, 90, 0);
-                }
 
                 string wall = load.winDoors[i].ParentWall;
 
@@ -151,10 +148,12 @@ public class DataHandler : MonoBehaviour
             {
                 Vector3 pos = new Vector3(load.objects[i].posX, load.objects[i].posY, load.objects[i].posZ);
                 Vector3 scale = new Vector3(load.objects[i].scaleX, load.objects[i].scaleY, load.objects[i].scaleZ);
+                Vector3 eulerWD = new Vector3(load.objects[i].rotX, load.objects[i].rotY, load.objects[i].rotZ);
 
                 GameObject obj = Instantiate(objPrefab, pos, Quaternion.identity);
                 obj.transform.parent = objParent;
                 obj.transform.localScale = scale;
+                obj.transform.eulerAngles = eulerWD;
                 obj.name = load.objects[i].name;
                 uiEHScript.AddFurniture(obj);
             }
@@ -193,12 +192,14 @@ public class DataHandler : MonoBehaviour
 
             saveFile.winDoors[i].name = objs.name;
             saveFile.winDoors[i].ParentWall = objs.GetComponent<SelectableObject>().parentWall.name;
-
             
             saveFile.winDoors[i].posX = objs.transform.position.x;
             saveFile.winDoors[i].posY = objs.transform.position.y;
             saveFile.winDoors[i].posZ = objs.transform.position.z;
 
+            saveFile.winDoors[i].rotX = objs.transform.eulerAngles.x;
+            saveFile.winDoors[i].rotY = objs.transform.eulerAngles.y;
+            saveFile.winDoors[i].rotZ = objs.transform.eulerAngles.z;
 
             // Checks if scale of current windoor is zero
             if (objs.transform.localScale.Equals(Vector3.zero))
@@ -229,6 +230,10 @@ public class DataHandler : MonoBehaviour
             saveFile.objects[i - 1].scaleX = ObjTop.transform.GetChild(i).gameObject.transform.localScale.x;
             saveFile.objects[i - 1].scaleY = ObjTop.transform.GetChild(i).gameObject.transform.localScale.y;
             saveFile.objects[i - 1].scaleZ = ObjTop.transform.GetChild(i).gameObject.transform.localScale.z;
+
+            saveFile.objects[i-1].rotX = ObjTop.transform.GetChild(i).gameObject.transform.eulerAngles.x;
+            saveFile.objects[i-1].rotY = ObjTop.transform.GetChild(i).gameObject.transform.eulerAngles.y;
+            saveFile.objects[i-1].rotZ = ObjTop.transform.GetChild(i).gameObject.transform.eulerAngles.z;
         }
 
         bool isAdded = allSaves.TryAdd(saveName, saveFile);
