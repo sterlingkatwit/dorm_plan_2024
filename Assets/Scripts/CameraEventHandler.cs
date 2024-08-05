@@ -51,7 +51,6 @@ public class CameraEventHandler : MonoBehaviour
 
     private void CamZoom(){
         float scroll = Input.GetAxis("Mouse ScrollWheel");
-
         if (mainCam.orthographic && freeEnabled){
             mainCam.orthographicSize -= scroll * zoomSpeed;
             mainCam.orthographicSize = Mathf.Clamp(mainCam.orthographicSize, minZoom, maxZoom);
@@ -65,11 +64,9 @@ public class CameraEventHandler : MonoBehaviour
             }
             if (Input.GetMouseButton(0)){
                 Vector3 difference = Input.mousePosition - dragOrigin;
-                //float rotationX = difference.y * dragSpeed * Time.deltaTime;
                 float rotationY = difference.x * dragSpeed * Time.deltaTime;
 
                 mainCam.transform.RotateAround(Vector3.zero, Vector3.up, rotationY);
-                //mainCam.transform.RotateAround(Vector3.zero, mainCam.transform.right, rotationX);
 
                 dragOrigin = Input.mousePosition;
                 DetectWallIntersection();

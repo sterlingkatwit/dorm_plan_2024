@@ -327,43 +327,32 @@ public class ObjEditUIEventHandler : MonoBehaviour
 
     private bool objMoveCheck(GameObject furniture, Vector3 direction, float inc, bool third)
     {
-        Collider furnitureCollider = furniture.GetComponent<Collider>();
+        BoxCollider boxCollider = furniture.GetComponent<BoxCollider>();
+        if (boxCollider == null){
+            return false;
+        }
+
         Vector3 currentPos = furniture.transform.position;
-        Vector3 raycastStartPos = currentPos;
+        Vector3 targetPos = currentPos + direction * inc;
 
-        if (furnitureCollider == null){
-            Debug.LogError("Object to move must have a collider.");
-            return false;
-        }
-
-        // Determine the raycast starting position based on the direction
-        if (direction == Vector3.forward){
-            raycastStartPos = new Vector3(furniture.transform.position.x, furniture.transform.position.y, furnitureCollider.bounds.max.z);
-        }else if (direction == Vector3.back){
-            raycastStartPos = new Vector3(furniture.transform.position.x, furniture.transform.position.y, furnitureCollider.bounds.min.z);
-        }else if (direction == Vector3.left){
-            raycastStartPos = new Vector3(furnitureCollider.bounds.min.x, furniture.transform.position.y, furniture.transform.position.z);
-        }else if (direction == Vector3.right){
-            raycastStartPos = new Vector3(furnitureCollider.bounds.max.x, furniture.transform.position.y, furniture.transform.position.z);
-        }else if (third){
-            if (direction == Vector3.up){
-                raycastStartPos = new Vector3(furniture.transform.position.x, furnitureCollider.bounds.max.y, furniture.transform.position.z);
-            }else if (direction == Vector3.down){
-                raycastStartPos = new Vector3(furniture.transform.position.x, furnitureCollider.bounds.min.y, furniture.transform.position.z);
-            }
-        }
-
+        // Get the center of the box collider in world space
+        Vector3 center = furniture.transform.TransformPoint(boxCollider.center);
+        
+        // Get the half extents of the box collider in world space
+        Vector3 halfExtents = Vector3.Scale(boxCollider.size * 0.5f, furniture.transform.lossyScale);
+        Quaternion orientation = furniture.transform.rotation;
         RaycastHit hit;
-        if (Physics.Raycast(raycastStartPos, direction, out hit, inc)){
+        bool collision = Physics.BoxCast(center, halfExtents, direction, out hit, orientation, inc, 
+                                        Physics.DefaultRaycastLayers, QueryTriggerInteraction.Ignore);
+
+        if (collision){
             // If a collision is detected, move the object to the point just before the collision
-            Vector3 moveDistance = direction * (hit.distance - 0.01f);
-            furniture.transform.position += moveDistance;
+            float moveDistance = Mathf.Max(0, hit.distance - 0.001f);
+            furniture.transform.position += direction * moveDistance;
             return false;
-        }
-        else {
+        } else{
             // If no collision is detected, move the object by the full increment
-            Vector3 moveDistance = direction * inc;
-            furniture.transform.position += moveDistance;
+            furniture.transform.position = targetPos;
             return true;
         }
     }
